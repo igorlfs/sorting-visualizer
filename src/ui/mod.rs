@@ -28,15 +28,20 @@ impl MyEguiApp {
 impl eframe::App for MyEguiApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            egui::ComboBox::from_label("Choose an algorithm")
-                .selected_text(format!("{:?}", self.selected))
-                .show_ui(ui, |ui| {
-                    ui.selectable_value(&mut self.selected, Enum::Bubble, "Bubble Sort");
-                    ui.selectable_value(&mut self.selected, Enum::Merge, "Merge Sort");
-                    ui.selectable_value(&mut self.selected, Enum::Quick, "Quick Sort");
-                    ui.selectable_value(&mut self.selected, Enum::Shell, "Shell Sort");
-                    ui.selectable_value(&mut self.selected, Enum::Radix, "Radix Sort");
-                });
+            ui.horizontal(|ui| {
+                egui::ComboBox::from_label("Choose an algorithm")
+                    .selected_text(format!("{:?}", self.selected))
+                    .show_ui(ui, |ui| {
+                        ui.selectable_value(&mut self.selected, Enum::Bubble, "Bubble Sort");
+                        ui.selectable_value(&mut self.selected, Enum::Merge, "Merge Sort");
+                        ui.selectable_value(&mut self.selected, Enum::Quick, "Quick Sort");
+                        ui.selectable_value(&mut self.selected, Enum::Shell, "Shell Sort");
+                        ui.selectable_value(&mut self.selected, Enum::Radix, "Radix Sort");
+                    });
+                if ui.add(egui::Button::new("Start")).clicked() {}
+                if ui.add(egui::Button::new("Step")).clicked() {}
+                if ui.add(egui::Button::new("Shuffle")).clicked() {}
+            });
         });
     }
 }
