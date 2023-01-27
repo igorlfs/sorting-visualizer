@@ -3,6 +3,8 @@ use eframe::{
     epaint::{vec2, Color32, Stroke, Vec2},
 };
 mod util;
+use crate::algorithms::sorters;
+use crate::algorithms::sorters::Sorter;
 
 #[derive(PartialEq, Debug)]
 enum Enum {
@@ -16,6 +18,7 @@ enum Enum {
 pub(crate) struct MyEguiApp {
     selected: Enum,
     numbers: Vec<u32>,
+    initial_state: Vec<u32>,
 }
 
 impl Default for MyEguiApp {
@@ -23,6 +26,7 @@ impl Default for MyEguiApp {
         Self {
             selected: Enum::Bubble,
             numbers: util::gen_random_vector(1, 11, 20),
+            initial_state: vec![],
         }
     }
 }
@@ -50,9 +54,18 @@ impl eframe::App for MyEguiApp {
                         ui.selectable_value(&mut self.selected, Enum::Shell, "Shell Sort");
                         ui.selectable_value(&mut self.selected, Enum::Radix, "Radix Sort");
                     });
-                if ui.add(egui::Button::new("Start")).clicked() {}
+                if ui.add(egui::Button::new("Start")).clicked() {
+                    self.initial_state = self.numbers.clone();
+                    sorters::BubbleSort::run(&mut self.numbers);
+                }
                 if ui.add(egui::Button::new("Step")).clicked() {}
-                if ui.add(egui::Button::new("Shuffle")).clicked() {}
+                if ui.add(egui::Button::new("Shuffle")).clicked() {
+                    self.numbers = util::gen_random_vector(1, 11, 20);
+                    self.initial_state = self.numbers.clone();
+                }
+                if ui.add(egui::Button::new("Reset")).clicked() {
+                    self.numbers = self.initial_state.clone();
+                }
             });
             ui.add_space(10.);
             ui.horizontal_top(|ui| {
