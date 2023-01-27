@@ -22,19 +22,30 @@ const ROUNDING: f32 = 5.;
 const STROKE_WIDTH: f32 = 2.;
 const NUMBERS_GRID: &str = "numbers";
 const STROKE_COLOR: Color32 = Color32::WHITE;
+const VECTOR_SIZE: usize = 5;
+
+struct Sortable {
+    numbers: Vec<u32>,
+    finished: bool,
+}
 
 pub(crate) struct MyEguiApp {
     selected: Enum,
-    numbers: Vec<u32>,
+    sortable: Sortable,
     initial_state: Vec<u32>,
+    sorter: sorters::BubbleSort,
 }
 
 impl Default for MyEguiApp {
     fn default() -> Self {
         Self {
             selected: Enum::Bubble,
-            numbers: util::gen_random_vector(1, 11, 20),
+            sortable: Sortable {
+                numbers: util::gen_random_vector(1, 11, VECTOR_SIZE),
+                finished: false,
+            },
             initial_state: vec![],
+            sorter: sorters::BubbleSort::new(VECTOR_SIZE),
         }
     }
 }
@@ -53,8 +64,8 @@ impl MyEguiApp {
     fn draw_numbers(&self, ui: &mut Ui) {
         ui.horizontal_top(|ui| {
             ui.add_space(PADDING);
-            for i in 0..self.numbers.len() {
-                let height: f32 = (BASE_HEIGHT * self.numbers[i]) as f32;
+            for i in 0..self.sortable.numbers.len() {
+                let height: f32 = (BASE_HEIGHT * self.sortable.numbers[i]) as f32;
                 let size: Vec2 = vec2(BASE_WIDTH, height);
                 egui::Grid::new(NUMBERS_GRID).show(ui, |ui| {
                     ui.vertical_centered(|ui| {
@@ -66,7 +77,7 @@ impl MyEguiApp {
                             Stroke::new(STROKE_WIDTH, STROKE_COLOR),
                         );
                         ui.end_row();
-                        let text: String = self.numbers[i].to_string();
+                        let text: String = self.sortable.numbers[i].to_string();
                         ui.label(text);
                         ui.end_row();
                     });
@@ -79,19 +90,32 @@ impl MyEguiApp {
     /// Create buttons and handle their events.
     fn handle_buttons(&mut self, ui: &mut Ui) {
         if ui.add(egui::Button::new("Start")).clicked() {
-            self.initial_state = self.numbers.clone();
-            sorters::BubbleSort::run(&mut self.numbers);
+            self.initial_state = self.sortable.numbers.clone();
+            self.sorter.run(&mut self.sortable.numbers);
+            self.sortable.finished = true;
         }
-        if ui.add(egui::Button::new("Step")).clicked() {}
+        if ui.add(egui::Button::new("Step")).clicked() {
+            if self.initial_state.is_empty() {
+                self.initial_state = self.sortable.numbers.clone();
+            }
+            if !self.sortable.finished {
+                self.sorter.step(&mut self.sortable.numbers);
+                self.sortable.finished = self.sorter.modify_state();
+            }
+        }
         if ui.add(egui::Button::new("Shuffle")).clicked() {
-            self.numbers = util::gen_random_vector(1, 11, 20);
-            self.initial_state = self.numbers.clone();
+            self.sortable.numbers = util::gen_random_vector(1, 11, VECTOR_SIZE);
+            self.sortable.finished = false;
+            self.sorter.reset();
+            self.initial_state = self.sortable.numbers.clone();
         }
         if ui.add(egui::Button::new("Reset")).clicked() {
             if self.initial_state.is_empty() {
-                self.initial_state = self.numbers.clone()
+                self.initial_state = self.sortable.numbers.clone()
             } else {
-                self.numbers = self.initial_state.clone();
+                self.sortable.numbers = self.initial_state.clone();
+                self.sortable.finished = false;
+                self.sorter.reset();
             }
         }
     }
