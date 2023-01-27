@@ -2,6 +2,7 @@ use eframe::{
     egui::{self, Sense},
     epaint::{vec2, Color32, Stroke, Vec2},
 };
+mod util;
 
 #[derive(PartialEq, Debug)]
 enum Enum {
@@ -14,14 +15,14 @@ enum Enum {
 
 pub(crate) struct MyEguiApp {
     selected: Enum,
-    numbers: Vec<i32>,
+    numbers: Vec<u32>,
 }
 
 impl Default for MyEguiApp {
     fn default() -> Self {
         Self {
             selected: Enum::Bubble,
-            numbers: vec![8, 4, 2, 6, 4],
+            numbers: util::gen_random_vector(1, 11, 20),
         }
     }
 }
@@ -55,21 +56,27 @@ impl eframe::App for MyEguiApp {
             });
             ui.add_space(10.);
             ui.horizontal_top(|ui| {
+                ui.add_space(10.);
                 for i in 0..self.numbers.len() {
                     let height: f32 = (64 * self.numbers[i]) as f32;
                     let size: Vec2 = vec2(32., height);
-                    ui.vertical(|ui| {
-                        let (rect, _response) = ui.allocate_at_least(size, Sense::hover());
-                        ui.painter().rect(
-                            rect,
-                            5.0,
-                            Color32::from_gray(64),
-                            Stroke::new(2.0, Color32::WHITE),
-                        );
-                        let text: String = self.numbers[i].to_string();
-                        ui.label(text);
+                    egui::Grid::new("numbers").show(ui, |ui| {
+                        ui.vertical_centered(|ui| {
+                            let (rect, _response) = ui.allocate_at_least(size, Sense::hover());
+                            ui.painter().rect(
+                                rect,
+                                5.0,
+                                Color32::from_gray(64),
+                                Stroke::new(2.0, Color32::WHITE),
+                            );
+                            ui.end_row();
+                            let text: String = self.numbers[i].to_string();
+                            ui.label(text);
+                            ui.end_row();
+                        });
                     });
                 }
+                ui.add_space(10.);
             });
         });
     }
