@@ -88,7 +88,11 @@ impl MyEguiApp {
             self.initial_state = self.numbers.clone();
         }
         if ui.add(egui::Button::new("Reset")).clicked() {
-            self.numbers = self.initial_state.clone();
+            if self.initial_state.is_empty() {
+                self.initial_state = self.numbers.clone()
+            } else {
+                self.numbers = self.initial_state.clone();
+            }
         }
     }
 }
