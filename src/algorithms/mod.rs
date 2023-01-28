@@ -18,7 +18,8 @@ pub trait Sorter {
     fn run(&mut self, array: &mut Vec<u32>);
 
     /// Takes a single step in running the algorithm.
-    fn step(&self, array: &mut Vec<u32>);
+    /// Returns true if the step swaps numbers.
+    fn step(&self, array: &mut Vec<u32>) -> bool;
 
     /// Set the Sorter's state to it's initial state.
     fn reset_state(&mut self);
@@ -33,6 +34,7 @@ impl Sorter for BubbleSort {
     fn new() -> BubbleSort {
         BubbleSort { x: 0, y: 0 }
     }
+
     fn modify_state(&mut self, len: usize) -> bool {
         if self.y < len - 2 - self.x {
             self.y += 1;
@@ -45,6 +47,7 @@ impl Sorter for BubbleSort {
         }
         false
     }
+
     fn run(&mut self, array: &mut Vec<u32>) {
         let len: usize = array.len();
         loop {
@@ -55,14 +58,19 @@ impl Sorter for BubbleSort {
         }
         self.reset_state();
     }
-    fn step(&self, array: &mut Vec<u32>) {
+
+    fn step(&self, array: &mut Vec<u32>) -> bool {
         if array[self.y] > array[self.y + 1] {
             array.swap(self.y, self.y + 1);
+            return true;
         }
+        false
     }
+
     fn get_comparing(&self) -> (usize, usize) {
         (self.y, self.y + 1)
     }
+
     fn reset_state(&mut self) {
         self.x = 0;
         self.y = 0;
@@ -130,5 +138,16 @@ mod tests {
     fn get_comparing() {
         let sorter = BubbleSort::new();
         assert_eq!((0, 1), sorter.get_comparing());
+    }
+
+    #[test]
+    fn step() {
+        let sorter = BubbleSort::new();
+        let mut arr: Vec<u32> = vec![5, 2];
+
+        // Swap 2 and 5
+        assert!(sorter.step(&mut arr));
+        // Correct position
+        assert!(!sorter.step(&mut arr));
     }
 }

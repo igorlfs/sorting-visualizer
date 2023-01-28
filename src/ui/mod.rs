@@ -2,6 +2,7 @@ use eframe::{
     egui::{self, Sense, Ui},
     epaint::{vec2, Color32, Stroke, Vec2},
 };
+use std::{thread, time};
 mod buttons;
 mod constants;
 use buttons::ButtonHandler;
@@ -26,12 +27,20 @@ const ROUNDING: f32 = 5.;
 const STROKE_WIDTH: f32 = 2.;
 const NUMBERS_GRID: &str = "numbers";
 const STROKE_COLOR: Color32 = Color32::WHITE;
+const WAIT_TIME: u64 = 300;
+
+#[derive(PartialEq)]
+enum State {
+    Start,
+    Running,
+    Finished,
+}
 
 pub(crate) struct Visualizer<'a> {
     selected: Enum,
     bundle: bundles::Bundle,
     initial_state: Vec<u32>,
-    finished: bool,
+    state: State,
     sorter: Box<dyn Sorter + 'a>,
 }
 
@@ -40,7 +49,7 @@ impl<'a> Default for Visualizer<'a> {
         Self {
             selected: Enum::Bubble,
             bundle: util::gen_bundle(constants::FLOOR, constants::CEIL, constants::VECTOR_SIZE),
-            finished: false,
+            state: State::Start,
             initial_state: vec![],
             sorter: Box::new(BubbleSort::new()),
         }
@@ -66,10 +75,15 @@ impl Visualizer<'_> {
                 let size: Vec2 = vec2(BASE_WIDTH, height);
                 let color: Color32 = match self.bundle.options()[i] {
                     bundles::Options::Default => Color32::from_gray(64),
-                    bundles::Options::Comparing => Color32::RED,
+                    bundles::Options::Comparing => Color32::YELLOW,
+                    bundles::Options::Switching => Color32::BLUE,
                 };
                 egui::Grid::new(NUMBERS_GRID).show(ui, |ui| {
                     ui.vertical_centered(|ui| {
+                        let text: String = self.bundle.numbers()[i].to_string();
+                        ui.label(text);
+                        ui.end_row();
+
                         let (rect, _response) = ui.allocate_at_least(size, Sense::hover());
                         ui.painter().rect(
                             rect,
@@ -77,9 +91,6 @@ impl Visualizer<'_> {
                             color,
                             Stroke::new(STROKE_WIDTH, STROKE_COLOR),
                         );
-                        ui.end_row();
-                        let text: String = self.bundle.numbers()[i].to_string();
-                        ui.label(text);
                         ui.end_row();
                     });
                 });
@@ -91,7 +102,7 @@ impl Visualizer<'_> {
     /// Create buttons and handle their events.
     fn handle_buttons(&mut self, ui: &mut Ui) {
         if ui.add(egui::Button::new("Start")).clicked() {
-            ButtonHandler::handle_start(self);
+            self.state = State::Running;
         }
         if ui.add(egui::Button::new("Step")).clicked() {
             ButtonHandler::handle_step(self);
@@ -102,6 +113,15 @@ impl Visualizer<'_> {
         if ui.add(egui::Button::new("Shuffle")).clicked() {
             ButtonHandler::handle_shuffle(self);
         }
+    }
+
+    fn reset(&mut self) {
+        if self.initial_state.is_empty() {
+            self.initial_state = self.bundle.numbers_mut().clone()
+        }
+        self.bundle.reset_options();
+        self.state = State::Start;
+        self.sorter.reset_state();
     }
 }
 
@@ -121,6 +141,11 @@ impl eframe::App for Visualizer<'_> {
                         ui.selectable_value(&mut self.selected, Enum::Radix, "Radix Sort");
                     });
                 self.handle_buttons(ui);
+                if self.state == State::Running {
+                    ButtonHandler::handle_step(self);
+                    let wait_time = time::Duration::from_millis(WAIT_TIME);
+                    thread::sleep(wait_time);
+                }
             });
 
             ui.add_space(PADDING);
