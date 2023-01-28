@@ -6,8 +6,8 @@ mod buttons;
 mod constants;
 use buttons::ButtonHandler;
 mod util;
-use crate::algorithms::sorters;
-use crate::algorithms::sorters::Sorter;
+use crate::algorithms;
+use crate::algorithms::Sorter;
 use crate::bundles;
 
 #[derive(PartialEq, Debug)]
@@ -32,7 +32,7 @@ pub(crate) struct Visualizer {
     bundle: bundles::Bundle,
     initial_state: Vec<u32>,
     finished: bool,
-    sorter: sorters::BubbleSort,
+    sorter: algorithms::BubbleSort,
 }
 
 impl Default for Visualizer {
@@ -42,7 +42,7 @@ impl Default for Visualizer {
             bundle: util::gen_bundle(constants::FLOOR, constants::CEIL, constants::VECTOR_SIZE),
             finished: false,
             initial_state: vec![],
-            sorter: sorters::BubbleSort::new(),
+            sorter: algorithms::BubbleSort::new(),
         }
     }
 }

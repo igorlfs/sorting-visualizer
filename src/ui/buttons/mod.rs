@@ -1,4 +1,4 @@
-use crate::algorithms::sorters::Sorter;
+use crate::algorithms::Sorter;
 
 use crate::ui;
 use ui::*;

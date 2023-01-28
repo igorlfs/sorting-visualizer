@@ -1,4 +1,4 @@
-use crate::algorithms::sorters::Sorter;
+use crate::algorithms::Sorter;
 
 #[derive(Eq, PartialEq, PartialOrd, Ord, Default, Clone, Debug)]
 pub enum Options {
