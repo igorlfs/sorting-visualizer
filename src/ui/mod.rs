@@ -2,6 +2,9 @@ use eframe::{
     egui::{self, Sense, Ui},
     epaint::{vec2, Color32, Stroke, Vec2},
 };
+mod buttons;
+mod constants;
+use buttons::ButtonHandler;
 mod util;
 use crate::algorithms::sorters;
 use crate::algorithms::sorters::Sorter;
@@ -22,17 +25,35 @@ const ROUNDING: f32 = 5.;
 const STROKE_WIDTH: f32 = 2.;
 const NUMBERS_GRID: &str = "numbers";
 const STROKE_COLOR: Color32 = Color32::WHITE;
-const VECTOR_SIZE: usize = 5;
 
-struct Sortable {
+#[derive(Eq, PartialEq, PartialOrd, Ord, Default, Clone, Debug)]
+enum Options {
+    #[default]
+    Default,
+    Selected,
+}
+
+pub struct Bundle {
     numbers: Vec<u32>,
-    finished: bool,
+    options: Vec<Options>,
+}
+
+impl Bundle {
+    fn new(numbers: Vec<u32>, options: Vec<Options>) -> Bundle {
+        Bundle { numbers, options }
+    }
+    fn reset_options(&mut self) {
+        for item in &mut self.options {
+            *item = Options::Default;
+        }
+    }
 }
 
 pub(crate) struct MyEguiApp {
     selected: Enum,
-    sortable: Sortable,
+    bundle: Bundle,
     initial_state: Vec<u32>,
+    finished: bool,
     sorter: sorters::BubbleSort,
 }
 
@@ -40,10 +61,8 @@ impl Default for MyEguiApp {
     fn default() -> Self {
         Self {
             selected: Enum::Bubble,
-            sortable: Sortable {
-                numbers: util::gen_random_vector(1, 11, VECTOR_SIZE),
-                finished: false,
-            },
+            bundle: util::gen_bundle(constants::FLOOR, constants::CEIL, constants::VECTOR_SIZE),
+            finished: false,
             initial_state: vec![],
             sorter: sorters::BubbleSort::new(),
         }
@@ -64,20 +83,24 @@ impl MyEguiApp {
     fn draw_numbers(&self, ui: &mut Ui) {
         ui.horizontal_top(|ui| {
             ui.add_space(PADDING);
-            for i in 0..self.sortable.numbers.len() {
-                let height: f32 = (BASE_HEIGHT * self.sortable.numbers[i]) as f32;
+            for i in 0..self.bundle.numbers.len() {
+                let height: f32 = (BASE_HEIGHT * self.bundle.numbers[i]) as f32;
                 let size: Vec2 = vec2(BASE_WIDTH, height);
+                let color: Color32 = match self.bundle.options[i] {
+                    Options::Default => Color32::from_gray(64),
+                    Options::Selected => Color32::RED,
+                };
                 egui::Grid::new(NUMBERS_GRID).show(ui, |ui| {
                     ui.vertical_centered(|ui| {
                         let (rect, _response) = ui.allocate_at_least(size, Sense::hover());
                         ui.painter().rect(
                             rect,
                             ROUNDING,
-                            Color32::from_gray(64),
+                            color,
                             Stroke::new(STROKE_WIDTH, STROKE_COLOR),
                         );
                         ui.end_row();
-                        let text: String = self.sortable.numbers[i].to_string();
+                        let text: String = self.bundle.numbers[i].to_string();
                         ui.label(text);
                         ui.end_row();
                     });
@@ -90,33 +113,16 @@ impl MyEguiApp {
     /// Create buttons and handle their events.
     fn handle_buttons(&mut self, ui: &mut Ui) {
         if ui.add(egui::Button::new("Start")).clicked() {
-            self.initial_state = self.sortable.numbers.clone();
-            self.sorter.run(&mut self.sortable.numbers);
-            self.sortable.finished = true;
+            ButtonHandler::handle_start(self);
         }
         if ui.add(egui::Button::new("Step")).clicked() {
-            if self.initial_state.is_empty() {
-                self.initial_state = self.sortable.numbers.clone();
-            }
-            if !self.sortable.finished {
-                self.sorter.step(&mut self.sortable.numbers);
-                self.sortable.finished = self.sorter.modify_state(self.sortable.numbers.len());
-            }
-        }
-        if ui.add(egui::Button::new("Shuffle")).clicked() {
-            self.sortable.numbers = util::gen_random_vector(1, 11, VECTOR_SIZE);
-            self.sortable.finished = false;
-            self.sorter.reset();
-            self.initial_state = self.sortable.numbers.clone();
+            ButtonHandler::handle_step(self);
         }
         if ui.add(egui::Button::new("Reset")).clicked() {
-            if self.initial_state.is_empty() {
-                self.initial_state = self.sortable.numbers.clone()
-            } else {
-                self.sortable.numbers = self.initial_state.clone();
-                self.sortable.finished = false;
-                self.sorter.reset();
-            }
+            ButtonHandler::handle_reset(self);
+        }
+        if ui.add(egui::Button::new("Shuffle")).clicked() {
+            ButtonHandler::handle_shuffle(self);
         }
     }
 }
