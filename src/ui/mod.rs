@@ -8,6 +8,7 @@ use buttons::ButtonHandler;
 mod util;
 use crate::algorithms::sorters;
 use crate::algorithms::sorters::Sorter;
+use crate::bundles;
 
 #[derive(PartialEq, Debug)]
 enum Enum {
@@ -26,38 +27,15 @@ const STROKE_WIDTH: f32 = 2.;
 const NUMBERS_GRID: &str = "numbers";
 const STROKE_COLOR: Color32 = Color32::WHITE;
 
-#[derive(Eq, PartialEq, PartialOrd, Ord, Default, Clone, Debug)]
-enum Options {
-    #[default]
-    Default,
-    Selected,
-}
-
-pub struct Bundle {
-    numbers: Vec<u32>,
-    options: Vec<Options>,
-}
-
-impl Bundle {
-    fn new(numbers: Vec<u32>, options: Vec<Options>) -> Bundle {
-        Bundle { numbers, options }
-    }
-    fn reset_options(&mut self) {
-        for item in &mut self.options {
-            *item = Options::Default;
-        }
-    }
-}
-
-pub(crate) struct MyEguiApp {
+pub(crate) struct Visualizer {
     selected: Enum,
-    bundle: Bundle,
+    bundle: bundles::Bundle,
     initial_state: Vec<u32>,
     finished: bool,
     sorter: sorters::BubbleSort,
 }
 
-impl Default for MyEguiApp {
+impl Default for Visualizer {
     fn default() -> Self {
         Self {
             selected: Enum::Bubble,
@@ -69,7 +47,7 @@ impl Default for MyEguiApp {
     }
 }
 
-impl MyEguiApp {
+impl Visualizer {
     pub(crate) fn new(_cc: &eframe::CreationContext<'_>) -> Self {
         // Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_visuals.
         // Restore app state using cc.storage (requires the "persistence" feature).
@@ -83,12 +61,12 @@ impl MyEguiApp {
     fn draw_numbers(&self, ui: &mut Ui) {
         ui.horizontal_top(|ui| {
             ui.add_space(PADDING);
-            for i in 0..self.bundle.numbers.len() {
-                let height: f32 = (BASE_HEIGHT * self.bundle.numbers[i]) as f32;
+            for i in 0..self.bundle.numbers().len() {
+                let height: f32 = (BASE_HEIGHT * self.bundle.numbers()[i]) as f32;
                 let size: Vec2 = vec2(BASE_WIDTH, height);
-                let color: Color32 = match self.bundle.options[i] {
-                    Options::Default => Color32::from_gray(64),
-                    Options::Selected => Color32::RED,
+                let color: Color32 = match self.bundle.options()[i] {
+                    bundles::Options::Default => Color32::from_gray(64),
+                    bundles::Options::Selected => Color32::RED,
                 };
                 egui::Grid::new(NUMBERS_GRID).show(ui, |ui| {
                     ui.vertical_centered(|ui| {
@@ -100,7 +78,7 @@ impl MyEguiApp {
                             Stroke::new(STROKE_WIDTH, STROKE_COLOR),
                         );
                         ui.end_row();
-                        let text: String = self.bundle.numbers[i].to_string();
+                        let text: String = self.bundle.numbers()[i].to_string();
                         ui.label(text);
                         ui.end_row();
                     });
@@ -127,11 +105,12 @@ impl MyEguiApp {
     }
 }
 
-impl eframe::App for MyEguiApp {
+impl eframe::App for Visualizer {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             // Horizontal is used to align the ComboBox with the buttons
             ui.horizontal(|ui| {
+                ui.add_space(300.);
                 egui::ComboBox::from_label("Choose an algorithm")
                     .selected_text(format!("{:?}", self.selected))
                     .show_ui(ui, |ui| {

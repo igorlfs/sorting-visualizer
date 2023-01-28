@@ -1,6 +1,7 @@
 use eframe::epaint::Vec2;
 
 mod algorithms;
+mod bundles;
 mod ui;
 
 fn main() {
@@ -11,6 +12,6 @@ fn main() {
     eframe::run_native(
         "My egui App",
         native_options,
-        Box::new(|cc| Box::new(ui::MyEguiApp::new(cc))),
+        Box::new(|cc| Box::new(ui::Visualizer::new(cc))),
     );
 }

@@ -4,8 +4,8 @@ pub trait Sorter {
         Self: Sized;
     fn modify_state(&mut self, len: usize) -> bool;
     fn get_state(&self) -> (usize, usize);
-    fn run<T: Ord>(&mut self, array: &mut Vec<T>);
-    fn step<T: Ord>(&self, array: &mut Vec<T>);
+    fn run(&mut self, array: &mut Vec<u32>);
+    fn step(&self, array: &mut Vec<u32>);
     fn reset(&mut self);
 }
 
@@ -30,7 +30,7 @@ impl Sorter for BubbleSort {
         }
         false
     }
-    fn run<T: Ord>(&mut self, array: &mut Vec<T>) {
+    fn run(&mut self, array: &mut Vec<u32>) {
         let len: usize = array.len();
         loop {
             self.step(array);
@@ -40,7 +40,7 @@ impl Sorter for BubbleSort {
         }
         self.reset();
     }
-    fn step<T: Ord>(&self, array: &mut Vec<T>) {
+    fn step(&self, array: &mut Vec<u32>) {
         if array[self.y] > array[self.y + 1] {
             array.swap(self.y, self.y + 1);
         }

@@ -6,39 +6,39 @@ use ui::*;
 pub struct ButtonHandler;
 
 impl ButtonHandler {
-    pub(crate) fn handle_start(app: &mut MyEguiApp) {
-        app.initial_state = app.bundle.numbers.clone();
-        app.sorter.run(&mut app.bundle.numbers);
+    pub(crate) fn handle_start(app: &mut Visualizer) {
+        app.initial_state = app.bundle.numbers_mut().clone();
+        app.sorter.run(app.bundle.numbers_mut());
         app.finished = true;
     }
-    pub(crate) fn handle_step(app: &mut MyEguiApp) {
+    pub(crate) fn handle_step(app: &mut Visualizer) {
         if app.initial_state.is_empty() {
-            app.initial_state = app.bundle.numbers.clone();
+            app.initial_state = app.bundle.numbers_mut().clone();
         }
         if !app.finished {
-            app.bundle.reset_options();
-            let (a, b): (usize, usize) = app.sorter.get_state();
-            app.bundle.options[a] = Options::Selected;
-            app.bundle.options[b] = Options::Selected;
-            app.sorter.step(&mut app.bundle.numbers);
-            app.finished = app.sorter.modify_state(app.bundle.numbers.len());
+            app.bundle.set_selected(&app.sorter);
+            app.sorter.step(app.bundle.numbers_mut());
+            app.finished = app.sorter.modify_state(app.bundle.numbers().len());
         }
     }
-    pub(crate) fn handle_reset(app: &mut MyEguiApp) {
+    pub(crate) fn handle_reset(app: &mut Visualizer) {
         if app.initial_state.is_empty() {
-            app.initial_state = app.bundle.numbers.clone()
+            app.initial_state = app.bundle.numbers_mut().clone()
         } else {
-            app.bundle.numbers = app.initial_state.clone();
+            app.bundle.set_numbers(app.initial_state.clone());
             app.finished = false;
             app.sorter.reset();
         }
     }
-    pub(crate) fn handle_shuffle(app: &mut MyEguiApp) {
-        app.bundle.numbers =
-            util::gen_random_vector(constants::FLOOR, constants::CEIL, constants::VECTOR_SIZE);
+    pub(crate) fn handle_shuffle(app: &mut Visualizer) {
+        app.bundle.set_numbers(util::gen_random_vector(
+            constants::FLOOR,
+            constants::CEIL,
+            constants::VECTOR_SIZE,
+        ));
         app.finished = false;
         app.sorter.reset();
-        app.initial_state = app.bundle.numbers.clone();
+        app.initial_state = app.bundle.numbers_mut().clone();
     }
 }
 
@@ -50,8 +50,8 @@ mod tests {
 
     #[test]
     fn handle_start() {
-        let mut app = ui::MyEguiApp::default();
-        let original_numbers = app.bundle.numbers.clone();
+        let mut app = ui::Visualizer::default();
+        let original_numbers = app.bundle.numbers_mut().clone();
         ButtonHandler::handle_start(&mut app);
         assert_eq!(app.initial_state, original_numbers);
     }

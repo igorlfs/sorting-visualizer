@@ -1,6 +1,6 @@
 use rand::{distributions::Uniform, Rng};
 
-use crate::ui;
+use crate::bundles::{Bundle, Options};
 
 pub fn gen_random_vector(floor: u32, ceil: u32, n: usize) -> Vec<u32> {
     let range = Uniform::new(floor, ceil);
@@ -8,8 +8,8 @@ pub fn gen_random_vector(floor: u32, ceil: u32, n: usize) -> Vec<u32> {
     values
 }
 
-pub fn gen_bundle(floor: u32, ceil: u32, n: usize) -> ui::Bundle {
+pub fn gen_bundle(floor: u32, ceil: u32, n: usize) -> Bundle {
     let numbers = gen_random_vector(floor, ceil, n);
-    let options: Vec<ui::Options> = vec![ui::Options::Default; n];
-    ui::Bundle::new(numbers, options)
+    let options: Vec<Options> = vec![Options::Default; n];
+    Bundle::new(numbers, options)
 }
