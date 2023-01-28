@@ -10,6 +10,7 @@ impl ButtonHandler {
         app.initial_state = app.bundle.numbers_mut().clone();
         app.sorter.run(app.bundle.numbers_mut());
         app.finished = true;
+        app.bundle.reset_options();
     }
     pub(crate) fn handle_step(app: &mut Visualizer) {
         if app.initial_state.is_empty() {
@@ -19,9 +20,12 @@ impl ButtonHandler {
             app.bundle.set_selected(&app.sorter);
             app.sorter.step(app.bundle.numbers_mut());
             app.finished = app.sorter.modify_state(app.bundle.numbers().len());
+        } else {
+            app.bundle.reset_options();
         }
     }
     pub(crate) fn handle_reset(app: &mut Visualizer) {
+        app.bundle.reset_options();
         if app.initial_state.is_empty() {
             app.initial_state = app.bundle.numbers_mut().clone()
         } else {
@@ -38,6 +42,7 @@ impl ButtonHandler {
         ));
         app.finished = false;
         app.sorter.reset();
+        app.bundle.reset_options();
         app.initial_state = app.bundle.numbers_mut().clone();
     }
 }
