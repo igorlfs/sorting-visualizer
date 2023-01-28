@@ -29,7 +29,7 @@ const NUMBERS_GRID: &str = "numbers";
 const STROKE_COLOR: Color32 = Color32::WHITE;
 const WAIT_TIME: u64 = 300;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 enum State {
     Start,
     Running,
@@ -39,7 +39,7 @@ enum State {
 pub(crate) struct Visualizer<'a> {
     selected: Enum,
     bundle: bundles::Bundle,
-    initial_state: Vec<u32>,
+    original_numbers: Vec<u32>,
     state: State,
     sorter: Box<dyn Sorter + 'a>,
 }
@@ -50,7 +50,7 @@ impl<'a> Default for Visualizer<'a> {
             selected: Enum::Bubble,
             bundle: util::gen_bundle(constants::FLOOR, constants::CEIL, constants::VECTOR_SIZE),
             state: State::Start,
-            initial_state: vec![],
+            original_numbers: vec![],
             sorter: Box::new(BubbleSort::new()),
         }
     }
@@ -116,10 +116,11 @@ impl Visualizer<'_> {
     }
 
     fn reset(&mut self) {
-        if self.initial_state.is_empty() {
-            self.initial_state = self.bundle.numbers_mut().clone()
+        if self.original_numbers.is_empty() {
+            self.original_numbers = self.bundle.numbers_mut().clone()
         }
         self.bundle.reset_options();
+        self.bundle.clear_indexes();
         self.state = State::Start;
         self.sorter.reset_state();
     }

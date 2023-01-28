@@ -10,19 +10,32 @@ pub enum Options {
 pub struct Bundle {
     numbers: Vec<u32>,
     options: Vec<Options>,
+    indexes: (usize, usize),
 }
 
 impl Bundle {
     pub fn new(numbers: Vec<u32>, options: Vec<Options>) -> Bundle {
         assert_eq!(numbers.len(), options.len());
-        Bundle { numbers, options }
+        Bundle {
+            numbers,
+            options,
+            indexes: (usize::MAX, usize::MAX),
+        }
     }
 
     /// Sets `options` to Default.
     pub fn reset_options(&mut self) {
-        for item in &mut self.options {
-            *item = Options::Default;
+        let (a, b) = (self.indexes.0, self.indexes.1);
+        if a != usize::MAX {
+            self.options[a] = Options::Default;
         }
+        if b != usize::MAX {
+            self.options[b] = Options::Default;
+        }
+    }
+
+    pub fn clear_indexes(&mut self) {
+        self.indexes = (usize::MAX, usize::MAX);
     }
 
     pub fn numbers(&self) -> &[u32] {
@@ -44,6 +57,8 @@ impl Bundle {
     /// Clears last comparing indexes and set new ones.
     pub fn set_comparing(&mut self, (a, b): (usize, usize)) {
         self.reset_options();
+        self.indexes.0 = a;
+        self.indexes.1 = b;
         self.options[a] = Options::Comparing;
         self.options[b] = Options::Comparing;
     }
@@ -51,13 +66,19 @@ impl Bundle {
     /// Clears last comparing indexes and set new ones.
     pub fn set_switching(&mut self, (a, b): (usize, usize)) {
         self.reset_options();
+        self.indexes.0 = a;
+        self.indexes.1 = b;
         self.options[a] = Options::Switching;
         self.options[b] = Options::Switching;
     }
 
     /// Checks if `options` is all Default.
     pub fn all_default(&self) -> bool {
-        self.options.iter().all(|&x| x == Options::Default)
+        self.indexes.0 == usize::MAX || self.indexes.1 == usize::MAX
+    }
+
+    pub(crate) fn indexes(&self) -> (usize, usize) {
+        self.indexes
     }
 }
 
@@ -96,7 +117,7 @@ mod tests {
         let mut bundle = Bundle::new(arr, options);
 
         assert!(bundle.all_default());
-        bundle.options[0] = Options::Switching;
+        bundle.set_switching((0, 1));
         assert!(!bundle.all_default());
     }
 }
