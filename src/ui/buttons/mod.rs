@@ -1,5 +1,3 @@
-use crate::algorithms::Sorter;
-
 use crate::ui;
 use ui::*;
 
@@ -17,7 +15,7 @@ impl ButtonHandler {
             app.initial_state = app.bundle.numbers_mut().clone();
         }
         if !app.finished {
-            app.bundle.set_selected(&app.sorter);
+            app.bundle.set_selected(app.sorter.get_state());
             app.sorter.step(app.bundle.numbers_mut());
             app.finished = app.sorter.modify_state(app.bundle.numbers().len());
         } else {

@@ -6,7 +6,7 @@ mod buttons;
 mod constants;
 use buttons::ButtonHandler;
 mod util;
-use crate::algorithms;
+use crate::algorithms::BubbleSort;
 use crate::algorithms::Sorter;
 use crate::bundles;
 
@@ -27,27 +27,27 @@ const STROKE_WIDTH: f32 = 2.;
 const NUMBERS_GRID: &str = "numbers";
 const STROKE_COLOR: Color32 = Color32::WHITE;
 
-pub(crate) struct Visualizer {
+pub(crate) struct Visualizer<'a> {
     selected: Enum,
     bundle: bundles::Bundle,
     initial_state: Vec<u32>,
     finished: bool,
-    sorter: algorithms::BubbleSort,
+    sorter: Box<dyn Sorter + 'a>,
 }
 
-impl Default for Visualizer {
+impl<'a> Default for Visualizer<'a> {
     fn default() -> Self {
         Self {
             selected: Enum::Bubble,
             bundle: util::gen_bundle(constants::FLOOR, constants::CEIL, constants::VECTOR_SIZE),
             finished: false,
             initial_state: vec![],
-            sorter: algorithms::BubbleSort::new(),
+            sorter: Box::new(BubbleSort::new()),
         }
     }
 }
 
-impl Visualizer {
+impl Visualizer<'_> {
     pub(crate) fn new(_cc: &eframe::CreationContext<'_>) -> Self {
         // Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_visuals.
         // Restore app state using cc.storage (requires the "persistence" feature).
@@ -105,7 +105,7 @@ impl Visualizer {
     }
 }
 
-impl eframe::App for Visualizer {
+impl eframe::App for Visualizer<'_> {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             // Horizontal is used to align the ComboBox with the buttons

@@ -1,5 +1,3 @@
-use crate::algorithms::Sorter;
-
 #[derive(Eq, PartialEq, PartialOrd, Ord, Default, Clone, Debug)]
 pub enum Options {
     #[default]
@@ -39,9 +37,8 @@ impl Bundle {
         &mut self.numbers
     }
 
-    pub fn set_selected(&mut self, sorter: &dyn Sorter) {
+    pub fn set_selected(&mut self, (a, b): (usize, usize)) {
         self.reset_options();
-        let (a, b): (usize, usize) = sorter.get_state();
         self.options[a] = Options::Selected;
         self.options[b] = Options::Selected;
     }
