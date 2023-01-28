@@ -3,8 +3,8 @@ pub trait Sorter {
     where
         Self: Sized;
     fn modify_state(&mut self, len: usize) -> bool;
-    fn run(&mut self, numbers: &mut Vec<u32>);
-    fn step(&self, numbers: &mut Vec<u32>);
+    fn run<T: Ord>(&mut self, array: &mut Vec<T>);
+    fn step<T: Ord>(&self, array: &mut Vec<T>);
     fn reset(&mut self);
 }
 
@@ -29,16 +29,16 @@ impl Sorter for BubbleSort {
         }
         false
     }
-    fn run(&mut self, numbers: &mut Vec<u32>) {
-        let len: usize = numbers.len();
+    fn run<T: Ord>(&mut self, array: &mut Vec<T>) {
+        let len: usize = array.len();
         while self.x != len - 1 {
-            self.step(numbers);
+            self.step(array);
             self.modify_state(len);
         }
     }
-    fn step(&self, numbers: &mut Vec<u32>) {
-        if numbers[self.y] > numbers[self.y + 1] {
-            numbers.swap(self.y, self.y + 1);
+    fn step<T: Ord>(&self, array: &mut Vec<T>) {
+        if array[self.y] > array[self.y + 1] {
+            array.swap(self.y, self.y + 1);
         }
     }
     fn reset(&mut self) {
