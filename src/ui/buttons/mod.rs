@@ -15,7 +15,7 @@ impl ButtonHandler {
             app.initial_state = app.bundle.numbers_mut().clone();
         }
         if !app.finished {
-            app.bundle.set_selected(app.sorter.get_state());
+            app.bundle.set_comparing(app.sorter.get_comparing());
             app.sorter.step(app.bundle.numbers_mut());
             app.finished = app.sorter.modify_state(app.bundle.numbers().len());
         } else {
@@ -29,7 +29,7 @@ impl ButtonHandler {
         } else {
             app.bundle.set_numbers(app.initial_state.clone());
             app.finished = false;
-            app.sorter.reset();
+            app.sorter.reset_state();
         }
     }
     pub(crate) fn handle_shuffle(app: &mut Visualizer) {
@@ -39,7 +39,7 @@ impl ButtonHandler {
             constants::VECTOR_SIZE,
         ));
         app.finished = false;
-        app.sorter.reset();
+        app.sorter.reset_state();
         app.bundle.reset_options();
         app.initial_state = app.bundle.numbers_mut().clone();
     }

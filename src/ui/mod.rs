@@ -66,7 +66,7 @@ impl Visualizer<'_> {
                 let size: Vec2 = vec2(BASE_WIDTH, height);
                 let color: Color32 = match self.bundle.options()[i] {
                     bundles::Options::Default => Color32::from_gray(64),
-                    bundles::Options::Selected => Color32::RED,
+                    bundles::Options::Comparing => Color32::RED,
                 };
                 egui::Grid::new(NUMBERS_GRID).show(ui, |ui| {
                     ui.vertical_centered(|ui| {

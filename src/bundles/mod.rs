@@ -2,7 +2,7 @@
 pub enum Options {
     #[default]
     Default,
-    Selected,
+    Comparing,
 }
 
 #[derive(PartialEq, PartialOrd)]
@@ -13,8 +13,10 @@ pub struct Bundle {
 
 impl Bundle {
     pub fn new(numbers: Vec<u32>, options: Vec<Options>) -> Bundle {
+        assert_eq!(numbers.len(), options.len());
         Bundle { numbers, options }
     }
+    /// Sets `options` to Default
     pub fn reset_options(&mut self) {
         for item in &mut self.options {
             *item = Options::Default;
@@ -37,9 +39,27 @@ impl Bundle {
         &mut self.numbers
     }
 
-    pub fn set_selected(&mut self, (a, b): (usize, usize)) {
+    /// Clears last comparing indexes and set new ones
+    pub fn set_comparing(&mut self, (a, b): (usize, usize)) {
         self.reset_options();
-        self.options[a] = Options::Selected;
-        self.options[b] = Options::Selected;
+        self.options[a] = Options::Comparing;
+        self.options[b] = Options::Comparing;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{Bundle, Options};
+
+    #[test]
+    fn set_comparing() {
+        let arr: Vec<u32> = vec![5, 2, 3, 4, 1];
+        let options: Vec<Options> = vec![Options::Default; arr.len()];
+        let mut bundle = Bundle::new(arr, options);
+
+        bundle.set_comparing((0, 1));
+
+        assert_eq!(bundle.options[0], Options::Comparing);
+        assert_eq!(bundle.options[1], Options::Comparing);
     }
 }

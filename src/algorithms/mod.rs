@@ -1,12 +1,27 @@
+/// A Sorter is a sorting algorithm split in two stages: the `step` and the `state`.
+/// A `step` consists in comparing two elements and swap them if necessary.
+/// A `state` controls the variables that the "step" is going to use.
 pub trait Sorter {
     fn new() -> Self
+    // The Compiler will complain if we don't do this
     where
         Self: Sized;
+
+    /// Modifying the state is analogous to stepping in a loop.
+    /// Returns true if all states have been traversed.
     fn modify_state(&mut self, len: usize) -> bool;
-    fn get_state(&self) -> (usize, usize);
+
+    /// Returns the indexes currently being compared.
+    fn get_comparing(&self) -> (usize, usize);
+
+    /// Runs the algorithm all at once.
     fn run(&mut self, array: &mut Vec<u32>);
+
+    /// Takes a single step in running the algorithm.
     fn step(&self, array: &mut Vec<u32>);
-    fn reset(&mut self);
+
+    /// Set the Sorter's state to it's initial state.
+    fn reset_state(&mut self);
 }
 
 pub struct BubbleSort {
@@ -38,17 +53,17 @@ impl Sorter for BubbleSort {
                 break;
             }
         }
-        self.reset();
+        self.reset_state();
     }
     fn step(&self, array: &mut Vec<u32>) {
         if array[self.y] > array[self.y + 1] {
             array.swap(self.y, self.y + 1);
         }
     }
-    fn get_state(&self) -> (usize, usize) {
+    fn get_comparing(&self) -> (usize, usize) {
         (self.y, self.y + 1)
     }
-    fn reset(&mut self) {
+    fn reset_state(&mut self) {
         self.x = 0;
         self.y = 0;
     }
@@ -61,30 +76,59 @@ mod tests {
 
     #[test]
     fn run() {
-        let mut arr: Vec<u32> = vec![5, 2, 3, 4, 1];
         let mut sorter = BubbleSort::new();
+        let mut arr: Vec<u32> = vec![5, 2, 3, 4, 1];
+
         sorter.run(&mut arr);
+
         let expected: Vec<u32> = vec![1, 2, 3, 4, 5];
+
         assert_eq!(arr, expected);
+
+        // We must reset after running
+        assert_eq!((sorter.x, sorter.y), (0, 0))
     }
 
+    /// In BubbleSort, we first compare (0,1), (1,2) .. (n,n - 1)
+    /// And the go back with (0,1), .. (n,n - 2) and so on.
     #[test]
     fn modify_state() {
-        let len: usize = 4;
         let mut sorter = BubbleSort::new();
+        let len: usize = 4;
+
+        // Comparing should be (1,2)
         sorter.modify_state(len);
         assert_eq!(sorter.y, 1);
+
+        // Comparing should be (2,3)
         sorter.modify_state(len);
         assert_eq!(sorter.y, 2);
+
+        // Comparing should be (0,1)
+        sorter.modify_state(len);
+        assert_eq!(sorter.y, 0);
+
+        // Comparing should be (1,2)
+        sorter.modify_state(len);
+        assert_eq!(sorter.y, 1);
+
+        // Comparing should be (0,1)
         sorter.modify_state(len);
         assert_eq!(sorter.y, 0);
     }
 
     #[test]
-    fn reset() {
+    fn reset_state() {
         let mut sorter = BubbleSort::new();
-        sorter.reset();
-        assert_eq!(sorter.x, 0);
-        assert_eq!(sorter.y, 0);
+
+        sorter.reset_state();
+
+        assert_eq!((sorter.x, sorter.y), (0, 0));
+    }
+
+    #[test]
+    fn get_comparing() {
+        let sorter = BubbleSort::new();
+        assert_eq!((0, 1), sorter.get_comparing());
     }
 }
