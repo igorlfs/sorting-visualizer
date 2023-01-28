@@ -1,8 +1,8 @@
 pub trait Sorter {
-    fn new(len: usize) -> Self
+    fn new() -> Self
     where
         Self: Sized;
-    fn modify_state(&mut self) -> bool;
+    fn modify_state(&mut self, len: usize) -> bool;
     fn run(&mut self, numbers: &mut Vec<u32>);
     fn step(&self, numbers: &mut Vec<u32>);
     fn reset(&mut self);
@@ -11,29 +11,29 @@ pub trait Sorter {
 pub struct BubbleSort {
     x: usize,
     y: usize,
-    len: usize,
 }
 
 impl Sorter for BubbleSort {
-    fn new(len: usize) -> BubbleSort {
-        BubbleSort { x: 0, y: 0, len }
+    fn new() -> BubbleSort {
+        BubbleSort { x: 0, y: 0 }
     }
-    fn modify_state(&mut self) -> bool {
-        if self.y < self.len - 2 - self.x {
+    fn modify_state(&mut self, len: usize) -> bool {
+        if self.y < len - 2 - self.x {
             self.y += 1;
         } else {
             self.x += 1;
             self.y = 0;
         }
-        if self.x == self.len - 1 {
+        if self.x == len - 1 {
             return true;
         }
         false
     }
     fn run(&mut self, numbers: &mut Vec<u32>) {
-        while self.x != self.len - 1 {
+        let len: usize = numbers.len();
+        while self.x != len - 1 {
             self.step(numbers);
-            self.modify_state();
+            self.modify_state(len);
         }
     }
     fn step(&self, numbers: &mut Vec<u32>) {
@@ -55,7 +55,7 @@ mod tests {
     #[test]
     fn run() {
         let mut arr: Vec<u32> = vec![5, 2, 3, 4, 1];
-        let mut sorter = BubbleSort::new(arr.len());
+        let mut sorter = BubbleSort::new();
         sorter.run(&mut arr);
         let expected: Vec<u32> = vec![1, 2, 3, 4, 5];
         assert_eq!(arr, expected);
@@ -63,12 +63,13 @@ mod tests {
 
     #[test]
     fn modify_state() {
-        let mut sorter = BubbleSort::new(4);
-        sorter.modify_state();
+        let len: usize = 4;
+        let mut sorter = BubbleSort::new();
+        sorter.modify_state(len);
         assert_eq!(sorter.y, 1);
-        sorter.modify_state();
+        sorter.modify_state(len);
         assert_eq!(sorter.y, 2);
-        sorter.modify_state();
+        sorter.modify_state(len);
         assert_eq!(sorter.y, 0);
     }
 }

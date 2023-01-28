@@ -45,7 +45,7 @@ impl Default for MyEguiApp {
                 finished: false,
             },
             initial_state: vec![],
-            sorter: sorters::BubbleSort::new(VECTOR_SIZE),
+            sorter: sorters::BubbleSort::new(),
         }
     }
 }
@@ -100,7 +100,7 @@ impl MyEguiApp {
             }
             if !self.sortable.finished {
                 self.sorter.step(&mut self.sortable.numbers);
-                self.sortable.finished = self.sorter.modify_state();
+                self.sortable.finished = self.sorter.modify_state(self.sortable.numbers.len());
             }
         }
         if ui.add(egui::Button::new("Shuffle")).clicked() {
