@@ -68,6 +68,7 @@ impl Bundle {
         self.indexes == (usize::MAX, usize::MAX)
     }
 
+    #[cfg(test)]
     pub(crate) fn indexes(&self) -> (usize, usize) {
         self.indexes
     }
