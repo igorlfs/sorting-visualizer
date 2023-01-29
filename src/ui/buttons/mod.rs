@@ -19,7 +19,7 @@ impl ButtonHandler {
     /// (by giving them a fancy color, for instance), while skipping the switch if not necessary.
     pub(crate) fn handle_step(app: &mut Visualizer) {
         if app.original_numbers.is_empty() {
-            app.original_numbers = app.bundle.numbers_mut().clone();
+            app.original_numbers = app.bundle.numbers().to_vec();
         }
         if app.bundle.all_default() {
             app.bundle.set_comparing(app.sorter.get_comparing());
@@ -54,7 +54,7 @@ impl ButtonHandler {
             constants::CEIL,
             constants::VECTOR_SIZE,
         ));
-        app.original_numbers = app.bundle.numbers_mut().clone();
+        app.original_numbers = app.bundle.numbers().to_vec();
     }
 }
 

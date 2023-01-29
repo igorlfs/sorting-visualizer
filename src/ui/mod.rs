@@ -125,7 +125,7 @@ impl Visualizer<'_> {
 
     fn reset(&mut self) {
         if self.original_numbers.is_empty() {
-            self.original_numbers = self.bundle.numbers_mut().clone()
+            self.original_numbers = self.bundle.numbers().to_vec();
         }
         self.bundle.reset_options();
         self.bundle.clear_indexes();
