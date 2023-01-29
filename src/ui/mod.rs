@@ -1,6 +1,6 @@
 use eframe::{
     egui::{self, Sense, Ui},
-    epaint::{vec2, Color32, Stroke, Vec2},
+    epaint::{vec2, Color32, Rect, Stroke, Vec2},
 };
 use std::{thread, time::Duration};
 use strum::IntoEnumIterator;
@@ -76,6 +76,7 @@ impl Visualizer<'_> {
         ui.horizontal_top(|ui| {
             ui.add_space(PADDING);
             for i in 0..self.bundle.numbers().len() {
+                let text: String = self.bundle.numbers()[i].to_string();
                 let height: f32 = (BASE_HEIGHT * self.bundle.numbers()[i]) as f32;
                 let size: Vec2 = vec2(BASE_WIDTH, height);
                 let color: Color32 = match self.bundle.options()[i] {
@@ -83,24 +84,27 @@ impl Visualizer<'_> {
                     bundles::Options::Comparing => Color32::YELLOW,
                     bundles::Options::Switching => Color32::BLUE,
                 };
-                egui::Grid::new(NUMBERS_GRID).show(ui, |ui| {
-                    ui.vertical_centered(|ui| {
-                        let text: String = self.bundle.numbers()[i].to_string();
-                        ui.label(text);
-                        ui.end_row();
-
-                        let (rect, _response) = ui.allocate_at_least(size, Sense::hover());
-                        ui.painter().rect(
-                            rect,
-                            ROUNDING,
-                            color,
-                            Stroke::new(STROKE_WIDTH, STROKE_COLOR),
-                        );
-                        ui.end_row();
-                    });
-                });
+                Visualizer::draw_numbers_helper(text, size, color, ui);
             }
             ui.add_space(PADDING);
+        });
+    }
+
+    fn draw_numbers_helper(text: String, size: Vec2, color: Color32, ui: &mut Ui) {
+        egui::Grid::new(NUMBERS_GRID).show(ui, |ui| {
+            ui.vertical_centered(|ui| {
+                ui.label(text);
+                ui.end_row();
+
+                let rect: Rect = ui.allocate_exact_size(size, Sense::hover()).0;
+                ui.painter().rect(
+                    rect,
+                    ROUNDING,
+                    color,
+                    Stroke::new(STROKE_WIDTH, STROKE_COLOR),
+                );
+                ui.end_row();
+            });
         });
     }
 
