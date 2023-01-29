@@ -14,6 +14,8 @@ pub trait Sorter {
     /// Returns the indexes currently being compared.
     fn get_comparing(&self) -> (usize, usize);
 
+    fn get_state(&self) -> (usize, usize);
+
     /// Runs the algorithm all at once.
     fn run(&mut self, array: &mut Vec<u32>);
 
@@ -74,6 +76,10 @@ impl Sorter for BubbleSort {
     fn reset_state(&mut self) {
         self.x = 0;
         self.y = 0;
+    }
+
+    fn get_state(&self) -> (usize, usize) {
+        (self.x, self.y)
     }
 }
 

@@ -2,7 +2,7 @@ use eframe::{
     egui::{self, Sense, Ui},
     epaint::{vec2, Color32, Stroke, Vec2},
 };
-use std::{thread, time};
+use std::{thread, time::Duration};
 mod buttons;
 mod constants;
 use buttons::ButtonHandler;
@@ -27,7 +27,8 @@ const ROUNDING: f32 = 5.;
 const STROKE_WIDTH: f32 = 2.;
 const NUMBERS_GRID: &str = "numbers";
 const STROKE_COLOR: Color32 = Color32::WHITE;
-const WAIT_TIME: u64 = 300;
+const WAIT_MILLIS: u64 = 120;
+const WAIT_TIME: Duration = Duration::from_millis(WAIT_MILLIS);
 
 #[derive(PartialEq, Debug)]
 enum State {
@@ -115,6 +116,13 @@ impl Visualizer<'_> {
         }
     }
 
+    fn handle_running(&mut self) {
+        if self.state == State::Running {
+            ButtonHandler::handle_step(self);
+            thread::sleep(WAIT_TIME);
+        }
+    }
+
     fn reset(&mut self) {
         if self.original_numbers.is_empty() {
             self.original_numbers = self.bundle.numbers_mut().clone()
@@ -123,6 +131,37 @@ impl Visualizer<'_> {
         self.bundle.clear_indexes();
         self.state = State::Start;
         self.sorter.reset_state();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::time::Instant;
+
+    use crate::{bundles::Options, ui::State};
+
+    use super::{Visualizer, WAIT_TIME};
+
+    #[test]
+    fn handle_running() {
+        let mut app = Visualizer {
+            state: State::Running,
+            ..Default::default()
+        };
+        let now = Instant::now();
+        app.handle_running();
+        assert!(now.elapsed() >= WAIT_TIME);
+    }
+
+    #[test]
+    fn reset() {
+        let mut app = Visualizer::default();
+        app.reset();
+        assert_eq!(app.original_numbers, app.bundle.numbers());
+        assert!(app.bundle.options().iter().all(|x| *x == Options::Default));
+        assert_eq!(app.bundle.indexes(), (usize::MAX, usize::MAX));
+        assert_eq!(app.state, State::Start);
+        assert_eq!(app.sorter.get_state(), (0, 0));
     }
 }
 
@@ -142,11 +181,7 @@ impl eframe::App for Visualizer<'_> {
                         ui.selectable_value(&mut self.selected, Enum::Radix, "Radix Sort");
                     });
                 self.handle_buttons(ui);
-                if self.state == State::Running {
-                    ButtonHandler::handle_step(self);
-                    let wait_time = time::Duration::from_millis(WAIT_TIME);
-                    thread::sleep(wait_time);
-                }
+                self.handle_running();
             });
 
             ui.add_space(PADDING);
