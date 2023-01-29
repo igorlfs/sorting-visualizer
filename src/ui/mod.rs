@@ -132,11 +132,14 @@ impl Visualizer<'_> {
             if ui.add(egui::Button::new("Stop")).clicked() {
                 self.state = State::Start;
             }
-        } else if ui.add(egui::Button::new("Start")).clicked() {
-            self.state = State::Running;
-        }
-        if ui.add(egui::Button::new("Step")).clicked() {
-            ButtonHandler::handle_step(self);
+            ui.add_enabled(false, egui::Button::new("Step"));
+        } else {
+            if ui.add(egui::Button::new("Start")).clicked() {
+                self.state = State::Running;
+            }
+            if ui.add(egui::Button::new("Step")).clicked() {
+                ButtonHandler::handle_step(self);
+            }
         }
         if ui.add(egui::Button::new("Reset")).clicked() {
             ButtonHandler::handle_reset(self);
