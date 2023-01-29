@@ -128,7 +128,11 @@ impl Visualizer<'_> {
 
     /// Create buttons and handle their events.
     fn handle_buttons(&mut self, ui: &mut Ui) {
-        if ui.add(egui::Button::new("Start")).clicked() {
+        if self.state == State::Running {
+            if ui.add(egui::Button::new("Stop")).clicked() {
+                self.state = State::Start;
+            }
+        } else if ui.add(egui::Button::new("Start")).clicked() {
             self.state = State::Running;
         }
         if ui.add(egui::Button::new("Step")).clicked() {
@@ -142,6 +146,7 @@ impl Visualizer<'_> {
         }
     }
 
+    /// If running, take a step and sleep for WAIT_TIME.
     fn handle_running(&mut self) {
         if self.state == State::Running {
             ButtonHandler::handle_step(self);
@@ -149,6 +154,7 @@ impl Visualizer<'_> {
         }
     }
 
+    /// Set all variables to their initial state.
     fn reset(&mut self) {
         if self.original_numbers.is_empty() {
             self.original_numbers = self.bundle.numbers().to_vec();
