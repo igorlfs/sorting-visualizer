@@ -54,22 +54,13 @@ impl Bundle {
         &mut self.numbers
     }
 
-    /// Clears last comparing indexes and set new ones.
-    pub fn set_comparing(&mut self, (a, b): (usize, usize)) {
+    /// Gereric function to set based on indexes and Options.
+    pub fn set(&mut self, (a, b): (usize, usize), option: Options) {
         self.reset_options();
         self.indexes.0 = a;
         self.indexes.1 = b;
-        self.options[a] = Options::Comparing;
-        self.options[b] = Options::Comparing;
-    }
-
-    /// Clears last comparing indexes and set new ones.
-    pub fn set_switching(&mut self, (a, b): (usize, usize)) {
-        self.reset_options();
-        self.indexes.0 = a;
-        self.indexes.1 = b;
-        self.options[a] = Options::Switching;
-        self.options[b] = Options::Switching;
+        self.options[a] = option;
+        self.options[b] = option;
     }
 
     /// Checks if `options` is all Default.
@@ -87,27 +78,15 @@ mod tests {
     use super::{Bundle, Options};
 
     #[test]
-    fn set_comparing() {
+    fn set() {
         let arr: Vec<u32> = vec![5, 2, 3, 4, 1];
         let options: Vec<Options> = vec![Options::Default; arr.len()];
         let mut bundle = Bundle::new(arr, options);
 
-        bundle.set_comparing((0, 1));
+        bundle.set((0, 1), Options::Comparing);
 
         assert_eq!(bundle.options[0], Options::Comparing);
         assert_eq!(bundle.options[1], Options::Comparing);
-    }
-
-    #[test]
-    fn set_switching() {
-        let arr: Vec<u32> = vec![5, 2, 3, 4, 1];
-        let options: Vec<Options> = vec![Options::Default; arr.len()];
-        let mut bundle = Bundle::new(arr, options);
-
-        bundle.set_switching((0, 1));
-
-        assert_eq!(bundle.options[0], Options::Switching);
-        assert_eq!(bundle.options[1], Options::Switching);
     }
 
     #[test]
@@ -117,7 +96,7 @@ mod tests {
         let mut bundle = Bundle::new(arr, options);
 
         assert!(bundle.all_default());
-        bundle.set_switching((0, 1));
+        bundle.set((0, 1), Options::Comparing);
         assert!(!bundle.all_default());
     }
 

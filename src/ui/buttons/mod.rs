@@ -1,4 +1,4 @@
-use crate::ui;
+use crate::{bundles::Options, ui};
 use ui::*;
 
 pub struct ButtonHandler;
@@ -22,7 +22,8 @@ impl ButtonHandler {
             app.original_numbers = app.bundle.numbers().to_vec();
         }
         if app.bundle.all_default() {
-            app.bundle.set_comparing(app.sorter.get_comparing());
+            app.bundle
+                .set(app.sorter.get_comparing(), Options::Comparing);
             return;
         }
         if app.state != State::Finished {
@@ -30,9 +31,11 @@ impl ButtonHandler {
                 if app.sorter.modify_state(app.bundle.numbers().len()) {
                     app.state = State::Finished;
                 }
-                app.bundle.set_comparing(app.sorter.get_comparing());
+                app.bundle
+                    .set(app.sorter.get_comparing(), Options::Comparing);
             } else {
-                app.bundle.set_switching(app.sorter.get_comparing());
+                app.bundle
+                    .set(app.sorter.get_comparing(), Options::Switching);
             }
         }
         if app.state == State::Finished {
