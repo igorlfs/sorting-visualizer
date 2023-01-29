@@ -8,3 +8,5 @@ edition = "2021"
 [dependencies]
 eframe = "0.20.1"
 rand = "0.8.5"
+strum = "0.24"
+strum_macros = "0.24"

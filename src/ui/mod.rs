@@ -3,6 +3,8 @@ use eframe::{
     epaint::{vec2, Color32, Stroke, Vec2},
 };
 use std::{thread, time::Duration};
+use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
 mod buttons;
 mod constants;
 use buttons::ButtonHandler;
@@ -11,15 +13,17 @@ use crate::algorithms::BubbleSort;
 use crate::algorithms::Sorter;
 use crate::bundles;
 
-#[derive(PartialEq, Debug)]
-enum Enum {
+#[derive(PartialEq, Debug, EnumIter, Clone, Copy)]
+enum Algorithms {
     Bubble,
-    Merge,
-    Quick,
-    Shell,
-    Radix,
+    // Selection,
+    // Insertion,
+    // Merge,
+    // Quick,
+    // Heap,
 }
 
+const CENTRALIZE_PADDING: f32 = 300.;
 const PADDING: f32 = 10.;
 const BASE_HEIGHT: u32 = 64;
 const BASE_WIDTH: f32 = 32.;
@@ -38,7 +42,7 @@ enum State {
 }
 
 pub(crate) struct Visualizer<'a> {
-    selected: Enum,
+    selected: Algorithms,
     bundle: bundles::Bundle,
     original_numbers: Vec<u32>,
     state: State,
@@ -48,7 +52,7 @@ pub(crate) struct Visualizer<'a> {
 impl<'a> Default for Visualizer<'a> {
     fn default() -> Self {
         Self {
-            selected: Enum::Bubble,
+            selected: Algorithms::Bubble,
             bundle: util::gen_bundle(constants::FLOOR, constants::CEIL, constants::VECTOR_SIZE),
             state: State::Start,
             original_numbers: vec![],
@@ -98,6 +102,28 @@ impl Visualizer<'_> {
             }
             ui.add_space(PADDING);
         });
+    }
+
+    /// Create the ComboBox and return true if algorithm selection has been changed.
+    fn handle_combox_box(&mut self, ui: &mut Ui) -> bool {
+        let previous_selection: Algorithms = self.selected;
+        ui.label("Algorithm:");
+        egui::ComboBox::from_id_source(0)
+            .selected_text(format!("{:?}Sort", self.selected))
+            .show_ui(ui, |ui| {
+                for option in Algorithms::iter() {
+                    ui.selectable_value(&mut self.selected, option, format!("{option:?}Sort"));
+                }
+            });
+        previous_selection != self.selected
+    }
+
+    /// Change the algorithm based on the selection and perform a reset.
+    fn switch_algorithm(&mut self) {
+        self.sorter = match self.selected {
+            Algorithms::Bubble => Box::new(BubbleSort::new()),
+        };
+        ButtonHandler::handle_reset(self);
     }
 
     /// Create buttons and handle their events.
@@ -170,19 +196,14 @@ impl eframe::App for Visualizer<'_> {
         egui::CentralPanel::default().show(ctx, |ui| {
             // Horizontal is used to align the ComboBox with the buttons
             ui.horizontal(|ui| {
-                ui.add_space(300.);
-                egui::ComboBox::from_label("Choose an algorithm")
-                    .selected_text(format!("{:?}", self.selected))
-                    .show_ui(ui, |ui| {
-                        ui.selectable_value(&mut self.selected, Enum::Bubble, "Bubble Sort");
-                        ui.selectable_value(&mut self.selected, Enum::Merge, "Merge Sort");
-                        ui.selectable_value(&mut self.selected, Enum::Quick, "Quick Sort");
-                        ui.selectable_value(&mut self.selected, Enum::Shell, "Shell Sort");
-                        ui.selectable_value(&mut self.selected, Enum::Radix, "Radix Sort");
-                    });
+                ui.add_space(CENTRALIZE_PADDING);
+                if self.handle_combox_box(ui) {
+                    self.switch_algorithm();
+                }
                 self.handle_buttons(ui);
-                self.handle_running();
             });
+
+            self.handle_running();
 
             ui.add_space(PADDING);
             self.draw_numbers(ui);
