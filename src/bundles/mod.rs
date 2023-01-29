@@ -65,7 +65,7 @@ impl Bundle {
 
     /// Checks if `options` is all Default.
     pub fn all_default(&self) -> bool {
-        self.indexes.0 == usize::MAX || self.indexes.1 == usize::MAX
+        self.indexes == (usize::MAX, usize::MAX)
     }
 
     pub(crate) fn indexes(&self) -> (usize, usize) {
