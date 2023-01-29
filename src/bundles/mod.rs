@@ -120,4 +120,12 @@ mod tests {
         bundle.set_switching((0, 1));
         assert!(!bundle.all_default());
     }
+
+    #[should_panic]
+    #[test]
+    fn new() {
+        let arr: Vec<u32> = vec![1];
+        let options: Vec<Options> = vec![];
+        Bundle::new(arr, options);
+    }
 }
