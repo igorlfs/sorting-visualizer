@@ -9,13 +9,13 @@ mod buttons;
 mod constants;
 use buttons::ButtonHandler;
 mod util;
-use crate::algorithms::BubbleSort;
 use crate::algorithms::Sorter;
+use crate::algorithms::{BubbleSort, SelectionSort};
 
 #[derive(PartialEq, Debug, EnumIter, Clone, Copy)]
 enum Algorithms {
     Bubble,
-    // Selection,
+    Selection,
     // Insertion,
     // Merge,
     // Quick,
@@ -76,20 +76,15 @@ impl Visualizer<'_> {
     /// Draws rectangles representing the numbers, whose height is proportional to the number.
     /// Use the number as a centralized label.
     fn draw_numbers(&self, ui: &mut Ui) {
-        let switching: (usize, usize) = self.sorter.get_switching();
-        let comparing: (usize, usize) = self.sorter.get_comparing();
+        let special: (usize, usize) = self.sorter.get_special();
         ui.horizontal_top(|ui| {
             ui.add_space(PADDING);
             for i in 0..self.numbers.len() {
                 let text: String = self.numbers[i].to_string();
                 let height: f32 = (BASE_HEIGHT * self.numbers[i]) as f32;
                 let size: Vec2 = vec2(BASE_WIDTH, height);
-                let color = if (i == switching.0 || i == switching.1)
-                    && self.state != State::Finished
-                {
-                    Color32::YELLOW
-                } else if (i == comparing.0 || i == comparing.1) && self.state != State::Finished {
-                    Color32::GREEN
+                let color = if (i == special.0 || i == special.1) && self.state != State::Finished {
+                    Color32::RED
                 } else {
                     Color32::GRAY
                 };
@@ -135,6 +130,7 @@ impl Visualizer<'_> {
     fn switch_algorithm(&mut self) {
         self.sorter = match self.selected {
             Algorithms::Bubble => Box::new(BubbleSort::new()),
+            Algorithms::Selection => Box::new(SelectionSort::new()),
         };
         ButtonHandler::handle_reset(self);
     }

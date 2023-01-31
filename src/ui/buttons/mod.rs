@@ -69,23 +69,23 @@ mod tests {
         // original_numbers is copied and the 2 first elements are set to be compared
         ButtonHandler::handle_step(&mut app);
         assert!(!app.original_numbers.is_empty());
-        assert_eq!(app.sorter.get_comparing(), (0, 1));
+        assert_eq!(app.sorter.get_special(), (0, 1));
 
         // Since 5 > 2,
         // The pair is marked for switching
         ButtonHandler::handle_step(&mut app);
-        assert_eq!(app.sorter.get_switching(), (0, 1));
+        assert_eq!(app.sorter.get_special(), (0, 1));
 
         // After stepping, the new order is [2, 5, 6]
         // Since 2 < 5 we will modify the state: (0, 1) -> (1,2)
         // And we will be comparing 5 and 6 next round
         ButtonHandler::handle_step(&mut app);
-        assert_eq!(app.sorter.get_comparing(), (1, 2));
+        assert_eq!(app.sorter.get_special(), (1, 2));
 
         // Since 5 < 6 we will modify the state: (1, 2) -> (0, 1)
         // And we will be comparing 2 and 5 next round
         ButtonHandler::handle_step(&mut app);
-        assert_eq!(app.sorter.get_switching(), (0, 1));
+        assert_eq!(app.sorter.get_special(), (0, 1));
 
         // We never hit the state of Finished,
         // given that once it's set, it's used to reset the app, setting it to Start once again.
