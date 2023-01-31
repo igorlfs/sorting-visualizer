@@ -1,15 +1,7 @@
 use rand::{distributions::Uniform, Rng};
 
-use crate::bundles::{Bundle, Options};
-
-pub fn gen_random_vector(floor: u32, ceil: u32, n: usize) -> Vec<u32> {
+pub fn gen_random_vector(floor: usize, ceil: usize, n: usize) -> Vec<usize> {
     let range = Uniform::new(floor, ceil);
-    let values: Vec<u32> = rand::thread_rng().sample_iter(&range).take(n).collect();
+    let values: Vec<usize> = rand::thread_rng().sample_iter(&range).take(n).collect();
     values
-}
-
-pub fn gen_bundle(floor: u32, ceil: u32, n: usize) -> Bundle {
-    let numbers = gen_random_vector(floor, ceil, n);
-    let options: Vec<Options> = vec![Options::Default; n];
-    Bundle::new(numbers, options)
 }

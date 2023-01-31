@@ -11,7 +11,6 @@ use buttons::ButtonHandler;
 mod util;
 use crate::algorithms::BubbleSort;
 use crate::algorithms::Sorter;
-use crate::bundles;
 
 #[derive(PartialEq, Debug, EnumIter, Clone, Copy)]
 enum Algorithms {
@@ -25,7 +24,7 @@ enum Algorithms {
 
 const CENTRALIZE_PADDING: f32 = 300.;
 const PADDING: f32 = 10.;
-const BASE_HEIGHT: u32 = 64;
+const BASE_HEIGHT: usize = 64;
 const BASE_WIDTH: f32 = 32.;
 const ROUNDING: f32 = 5.;
 const STROKE_WIDTH: f32 = 2.;
@@ -43,8 +42,8 @@ enum State {
 
 pub(crate) struct Visualizer<'a> {
     selected: Algorithms,
-    bundle: bundles::Bundle,
-    original_numbers: Vec<u32>,
+    numbers: Vec<usize>,
+    original_numbers: Vec<usize>,
     state: State,
     sorter: Box<dyn Sorter + 'a>,
 }
@@ -53,7 +52,11 @@ impl<'a> Default for Visualizer<'a> {
     fn default() -> Self {
         Self {
             selected: Algorithms::Bubble,
-            bundle: util::gen_bundle(constants::FLOOR, constants::CEIL, constants::VECTOR_SIZE),
+            numbers: util::gen_random_vector(
+                constants::FLOOR,
+                constants::CEIL,
+                constants::VECTOR_SIZE,
+            ),
             state: State::Start,
             original_numbers: vec![],
             sorter: Box::new(BubbleSort::new()),
@@ -73,16 +76,22 @@ impl Visualizer<'_> {
     /// Draws rectangles representing the numbers, whose height is proportional to the number.
     /// Use the number as a centralized label.
     fn draw_numbers(&self, ui: &mut Ui) {
+        let switching: (usize, usize) = self.sorter.get_switching();
+        let comparing: (usize, usize) = self.sorter.get_comparing();
         ui.horizontal_top(|ui| {
             ui.add_space(PADDING);
-            for i in 0..self.bundle.numbers().len() {
-                let text: String = self.bundle.numbers()[i].to_string();
-                let height: f32 = (BASE_HEIGHT * self.bundle.numbers()[i]) as f32;
+            for i in 0..self.numbers.len() {
+                let text: String = self.numbers[i].to_string();
+                let height: f32 = (BASE_HEIGHT * self.numbers[i]) as f32;
                 let size: Vec2 = vec2(BASE_WIDTH, height);
-                let color: Color32 = match self.bundle.options()[i] {
-                    bundles::Options::Default => Color32::from_gray(64),
-                    bundles::Options::Comparing => Color32::YELLOW,
-                    bundles::Options::Switching => Color32::BLUE,
+                let color = if (i == switching.0 || i == switching.1)
+                    && self.state != State::Finished
+                {
+                    Color32::YELLOW
+                } else if (i == comparing.0 || i == comparing.1) && self.state != State::Finished {
+                    Color32::GREEN
+                } else {
+                    Color32::GRAY
                 };
                 Visualizer::draw_numbers_helper(text, size, color, ui);
             }
@@ -164,10 +173,8 @@ impl Visualizer<'_> {
     /// Set all variables to their initial state.
     fn reset(&mut self) {
         if self.original_numbers.is_empty() {
-            self.original_numbers = self.bundle.numbers().to_vec();
+            self.original_numbers = self.numbers.clone();
         }
-        self.bundle.reset_options();
-        self.bundle.clear_indexes();
         self.state = State::Start;
         self.sorter.reset_state();
     }
@@ -177,7 +184,7 @@ impl Visualizer<'_> {
 mod tests {
     use std::time::Instant;
 
-    use crate::{bundles::Options, ui::State};
+    use crate::ui::State;
 
     use super::{Visualizer, WAIT_TIME};
 
@@ -196,11 +203,9 @@ mod tests {
     fn reset() {
         let mut app = Visualizer::default();
         app.reset();
-        assert_eq!(app.original_numbers, app.bundle.numbers());
-        assert!(app.bundle.options().iter().all(|x| *x == Options::Default));
-        assert_eq!(app.bundle.indexes(), (usize::MAX, usize::MAX));
+        assert_eq!(app.original_numbers, app.numbers);
         assert_eq!(app.state, State::Start);
-        assert_eq!(app.sorter.get_state(), (0, 0));
+        assert_eq!(app.sorter.get_state(), (0, usize::MAX));
     }
 }
 

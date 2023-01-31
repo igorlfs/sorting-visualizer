@@ -1,7 +1,6 @@
 use eframe::epaint::Vec2;
 
 mod algorithms;
-mod bundles;
 mod ui;
 
 fn main() {
