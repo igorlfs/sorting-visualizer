@@ -230,7 +230,7 @@ impl Sorter for SelectionSort {
 }
 
 #[cfg(test)]
-mod tests_insertion {
+mod tests_selection {
     use super::{SelectionSort, Sorter};
 
     #[test]
