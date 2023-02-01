@@ -1,10 +1,12 @@
-use super::Sorter;
+use super::{Reasons, Sorter};
+
 pub struct SelectionSort {
     x: usize,
     y: usize,
     min: usize,
     needs_switch: bool,
     special: (usize, usize),
+    reason: Reasons,
 }
 
 impl Sorter for SelectionSort {
@@ -15,11 +17,16 @@ impl Sorter for SelectionSort {
             min: 0,
             needs_switch: false,
             special: (usize::MAX, usize::MAX),
+            reason: Reasons::Comparing,
         }
     }
 
     fn get_special(&self) -> (usize, usize) {
         self.special
+    }
+
+    fn get_reason(&self) -> super::Reasons {
+        self.reason
     }
 
     fn get_state(&self) -> (usize, usize) {
@@ -49,6 +56,7 @@ impl Sorter for SelectionSort {
             return true;
         }
         self.special = (self.y, self.min);
+        self.reason = Reasons::Comparing;
         if array[self.y] < array[self.min] {
             self.min = self.y;
         }
@@ -62,6 +70,7 @@ impl Sorter for SelectionSort {
     fn switch(&mut self, array: &mut Vec<usize>) {
         self.special = (self.x, self.min);
         array.swap(self.x, self.min);
+        self.reason = Reasons::Switching;
         self.x += 1;
         self.min = self.x;
         self.y = self.x + 1;

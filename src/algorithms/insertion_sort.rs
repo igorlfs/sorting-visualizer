@@ -21,6 +21,10 @@ impl Sorter for InsertionSort {
         (self.x, self.y)
     }
 
+    fn get_reason(&self) -> super::Reasons {
+        todo!()
+    }
+
     fn get_state(&self) -> (usize, usize) {
         (self.x, self.y)
     }

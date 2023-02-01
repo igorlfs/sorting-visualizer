@@ -1,9 +1,10 @@
-use super::Sorter;
+use super::{Reasons, Sorter};
 
 pub struct BubbleSort {
     x: usize,
     y: usize,
     needs_switch: bool,
+    reason: Reasons,
 }
 
 impl BubbleSort {}
@@ -14,6 +15,7 @@ impl Sorter for BubbleSort {
             x: 0,
             y: usize::MAX,
             needs_switch: false,
+            reason: Reasons::Comparing,
         }
     }
     fn get_special(&self) -> (usize, usize) {
@@ -22,6 +24,10 @@ impl Sorter for BubbleSort {
         } else {
             (usize::MAX, usize::MAX)
         }
+    }
+
+    fn get_reason(&self) -> super::Reasons {
+        self.reason
     }
 
     fn get_state(&self) -> (usize, usize) {
@@ -57,11 +63,13 @@ impl Sorter for BubbleSort {
             self.y = 0;
         }
         self.needs_switch = array[self.y] > array[self.y + 1];
+        self.reason = Reasons::Comparing;
         false
     }
 
     fn switch(&mut self, array: &mut Vec<usize>) {
         array.swap(self.y, self.y + 1);
+        self.reason = Reasons::Switching;
         self.needs_switch = false;
     }
 

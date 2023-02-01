@@ -13,6 +13,9 @@ pub trait Sorter {
     /// Returns the indexes currently being compared or about to switch.
     fn get_special(&self) -> (usize, usize);
 
+    /// Returns the reason the special indexes are special.
+    fn get_reason(&self) -> Reasons;
+
     /// Return the loop's variables
     fn get_state(&self) -> (usize, usize);
 
@@ -32,4 +35,10 @@ pub trait Sorter {
 
     /// Set the Sorter's state to it's initial state.
     fn reset_state(&mut self);
+}
+
+#[derive(PartialEq, Clone, Copy)]
+pub enum Reasons {
+    Comparing,
+    Switching,
 }

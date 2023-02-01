@@ -1,3 +1,11 @@
+mod buttons;
+mod constants;
+mod util;
+use crate::algorithms::{
+    bubble_sort::BubbleSort, insertion_sort::InsertionSort, selection_sort::SelectionSort,
+};
+use crate::algorithms::{Reasons, Sorter};
+use buttons::ButtonHandler;
 use eframe::{
     egui::{self, Sense, Ui},
     epaint::{vec2, Color32, Rect, Stroke, Vec2},
@@ -5,14 +13,6 @@ use eframe::{
 use std::{thread, time::Duration};
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-mod buttons;
-mod constants;
-use buttons::ButtonHandler;
-mod util;
-use crate::algorithms::Sorter;
-use crate::algorithms::{
-    bubble_sort::BubbleSort, insertion_sort::InsertionSort, selection_sort::SelectionSort,
-};
 
 #[derive(PartialEq, Debug, EnumIter, Clone, Copy)]
 enum Algorithms {
@@ -32,7 +32,7 @@ const ROUNDING: f32 = 5.;
 const STROKE_WIDTH: f32 = 2.;
 const NUMBERS_GRID: &str = "numbers";
 const STROKE_COLOR: Color32 = Color32::WHITE;
-const WAIT_MILLIS: u64 = 120;
+const WAIT_MILLIS: u64 = 240;
 const WAIT_TIME: Duration = Duration::from_millis(WAIT_MILLIS);
 
 #[derive(PartialEq, Debug)]
@@ -79,6 +79,7 @@ impl Visualizer<'_> {
     /// Use the number as a centralized label.
     fn draw_numbers(&self, ui: &mut Ui) {
         let special: (usize, usize) = self.sorter.get_special();
+        let reason: Reasons = self.sorter.get_reason();
         ui.horizontal_top(|ui| {
             ui.add_space(PADDING);
             for i in 0..self.numbers.len() {
@@ -86,7 +87,11 @@ impl Visualizer<'_> {
                 let height: f32 = (BASE_HEIGHT * self.numbers[i]) as f32;
                 let size: Vec2 = vec2(BASE_WIDTH, height);
                 let color = if (i == special.0 || i == special.1) && self.state != State::Finished {
-                    Color32::RED
+                    if reason == Reasons::Comparing {
+                        Color32::LIGHT_YELLOW
+                    } else {
+                        Color32::LIGHT_GREEN
+                    }
                 } else {
                     Color32::GRAY
                 };
