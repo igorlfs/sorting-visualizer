@@ -10,13 +10,15 @@ mod constants;
 use buttons::ButtonHandler;
 mod util;
 use crate::algorithms::Sorter;
-use crate::algorithms::{BubbleSort, SelectionSort, InsertionSort};
+use crate::algorithms::{
+    bubble_sort::BubbleSort, insertion_sort::InsertionSort, selection_sort::SelectionSort,
+};
 
 #[derive(PartialEq, Debug, EnumIter, Clone, Copy)]
 enum Algorithms {
     Bubble,
     Selection,
-     Insertion,
+    Insertion,
     // Merge,
     // Quick,
     // Heap,
@@ -131,7 +133,7 @@ impl Visualizer<'_> {
         self.sorter = match self.selected {
             Algorithms::Bubble => Box::new(BubbleSort::new()),
             Algorithms::Selection => Box::new(SelectionSort::new()),
-			Algorithms::Insertion => Box::new(InsertionSort::new()),
+            Algorithms::Insertion => Box::new(InsertionSort::new()),
         };
         ButtonHandler::handle_reset(self);
     }
