@@ -7,8 +7,6 @@ pub struct BubbleSort {
     reason: Reasons,
 }
 
-impl BubbleSort {}
-
 impl Sorter for BubbleSort {
     fn new() -> BubbleSort {
         BubbleSort {

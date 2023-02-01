@@ -6,8 +6,6 @@ pub struct InsertionSort {
     needs_switch: bool,
 }
 
-impl InsertionSort {}
-
 impl Sorter for InsertionSort {
     fn new() -> InsertionSort {
         InsertionSort {
