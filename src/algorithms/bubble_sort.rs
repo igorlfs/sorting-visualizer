@@ -80,7 +80,7 @@ impl Sorter for BubbleSort {
 }
 
 #[cfg(test)]
-mod tests_bubble {
+mod tests {
     use crate::algorithms::bubble_sort::BubbleSort;
     use crate::algorithms::Sorter;
 

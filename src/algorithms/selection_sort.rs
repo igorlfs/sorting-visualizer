@@ -86,7 +86,7 @@ impl Sorter for SelectionSort {
 }
 
 #[cfg(test)]
-mod tests_selection {
+mod tests {
     use super::{SelectionSort, Sorter};
 
     #[test]
