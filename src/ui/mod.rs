@@ -1,6 +1,7 @@
 mod buttons;
 mod constants;
 mod util;
+use self::constants::{CEIL, FLOOR, VECTOR_SIZE};
 use crate::algorithms::{
     bubble_sort::BubbleSort, insertion_sort::InsertionSort, selection_sort::SelectionSort,
 };
@@ -32,7 +33,7 @@ const ROUNDING: f32 = 5.;
 const STROKE_WIDTH: f32 = 2.;
 const NUMBERS_GRID: &str = "numbers";
 const STROKE_COLOR: Color32 = Color32::WHITE;
-const WAIT_MILLIS: u64 = 240;
+const WAIT_MILLIS: u64 = 120;
 const WAIT_TIME: Duration = Duration::from_millis(WAIT_MILLIS);
 
 #[derive(PartialEq, Debug)]
@@ -54,11 +55,7 @@ impl<'a> Default for Visualizer<'a> {
     fn default() -> Self {
         Self {
             selected: Algorithms::Bubble,
-            numbers: util::gen_random_vector(
-                constants::FLOOR,
-                constants::CEIL,
-                constants::VECTOR_SIZE,
-            ),
+            numbers: util::gen_random_vector(FLOOR, CEIL, VECTOR_SIZE),
             state: State::Start,
             original_numbers: vec![],
             sorter: Box::new(BubbleSort::new()),
