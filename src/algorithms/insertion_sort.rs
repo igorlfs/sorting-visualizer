@@ -1,9 +1,10 @@
-use super::Sorter;
+use super::{Reasons, Sorter};
 
 pub struct InsertionSort {
     x: usize,
     y: usize,
     needs_switch: bool,
+    reason: Reasons,
 }
 
 impl Sorter for InsertionSort {
@@ -12,6 +13,7 @@ impl Sorter for InsertionSort {
             x: 0,
             y: 1,
             needs_switch: false,
+            reason: Reasons::Comparing,
         }
     }
 
@@ -20,7 +22,7 @@ impl Sorter for InsertionSort {
     }
 
     fn get_reason(&self) -> super::Reasons {
-        todo!()
+        self.reason
     }
 
     fn get_state(&self) -> (usize, usize) {
@@ -54,10 +56,12 @@ impl Sorter for InsertionSort {
             self.y += 1;
             self.x += 1;
         }
+        self.reason = Reasons::Comparing;
         false
     }
 
     fn switch(&mut self, array: &mut Vec<usize>) {
+        self.reason = Reasons::Switching;
         array.swap(self.y, self.x);
         self.needs_switch = false;
         if self.y != 1 {
