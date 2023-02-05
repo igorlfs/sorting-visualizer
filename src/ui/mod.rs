@@ -53,11 +53,12 @@ pub(crate) struct Visualizer<'a> {
 
 impl<'a> Default for Visualizer<'a> {
     fn default() -> Self {
+        let numbers: Vec<usize> = util::gen_random_vector(FLOOR, CEIL, VECTOR_SIZE);
         Self {
             selected: Algorithms::Bubble,
-            numbers: util::gen_random_vector(FLOOR, CEIL, VECTOR_SIZE),
+            numbers: numbers.clone(),
             state: State::Start,
-            original_numbers: vec![],
+            original_numbers: numbers,
             sorter: Box::new(BubbleSort::new()),
         }
     }
@@ -173,9 +174,6 @@ impl Visualizer<'_> {
 
     /// Set all variables to their initial state.
     fn reset(&mut self) {
-        if self.original_numbers.is_empty() {
-            self.original_numbers = self.numbers.clone();
-        }
         self.state = State::Start;
         self.sorter.reset_state();
     }

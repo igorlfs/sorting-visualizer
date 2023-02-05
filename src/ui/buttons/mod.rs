@@ -6,15 +6,9 @@ use super::constants::{CEIL, FLOOR, VECTOR_SIZE};
 pub struct ButtonHandler;
 
 impl ButtonHandler {
-    /// Sets the `original_numbers` if necessary.
-    /// (A workaround since we can't copy it in the constructor)
-    ///
     /// If not finished, takes a single step within the selected algorithm
     /// Else, resets the app state.
     pub(crate) fn handle_step(app: &mut Visualizer) {
-        if app.original_numbers.is_empty() {
-            app.original_numbers = app.numbers.clone();
-        }
         if app.state != State::Finished && app.sorter.step(&mut app.numbers) {
             app.state = State::Finished;
         }
@@ -65,10 +59,8 @@ mod tests {
 
         // This test only works the way it does because it's defaulting to BubbleSort
 
-        // The first time the function is run,
-        // original_numbers is copied and the 2 first elements are set to be compared
+        // The first time the function is run the 2 first elements are set to be compared
         ButtonHandler::handle_step(&mut app);
-        assert!(!app.original_numbers.is_empty());
         assert_eq!(app.sorter.get_special(), (0, 1));
 
         // Since 5 > 2,
