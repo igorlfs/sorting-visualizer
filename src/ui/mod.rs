@@ -80,9 +80,9 @@ impl Visualizer<'_> {
         ui.horizontal_top(|ui| {
             ui.add_space(PADDING);
             for i in 0..self.numbers.len() {
-                let text: String = self.numbers[i].to_string();
-                let height: f32 = (BASE_HEIGHT * self.numbers[i]) as f32;
-                let size: Vec2 = vec2(BASE_WIDTH, height);
+                let text = self.numbers[i].to_string();
+                let height = (BASE_HEIGHT * self.numbers[i]) as f32;
+                let size = vec2(BASE_WIDTH, height);
                 let color = if (i == special.0 || i == special.1) && self.state != State::Finished {
                     if reason == Reasons::Comparing {
                         Color32::LIGHT_YELLOW

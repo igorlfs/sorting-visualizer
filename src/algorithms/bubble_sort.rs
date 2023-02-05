@@ -32,15 +32,6 @@ impl Sorter for BubbleSort {
         (self.x, self.y)
     }
 
-    fn run(&mut self, array: &mut Vec<usize>) {
-        loop {
-            if self.step(array) {
-                break;
-            }
-        }
-        self.reset_state();
-    }
-
     fn step(&mut self, array: &mut Vec<usize>) -> bool {
         if self.needs_switch {
             self.switch(array);
@@ -85,7 +76,7 @@ mod tests {
     #[test]
     fn run() {
         let mut sorter = BubbleSort::new();
-        let mut arr: Vec<usize> = vec![5, 2, 6];
+        let mut arr = vec![5, 2, 6];
 
         sorter.run(&mut arr);
 
@@ -100,7 +91,7 @@ mod tests {
     #[test]
     fn step() {
         let mut sorter = BubbleSort::new();
-        let mut arr: Vec<usize> = vec![5, 2];
+        let mut arr = vec![5, 2];
 
         // Selects indexes 0 and 1 for comparing
         sorter.step(&mut arr);
@@ -118,7 +109,7 @@ mod tests {
     #[test]
     fn test_switch() {
         let mut sorter = BubbleSort::new();
-        let mut arr: Vec<usize> = vec![5, 2, 6];
+        let mut arr = vec![5, 2, 6];
 
         sorter.y = 0;
         sorter.switch(&mut arr);

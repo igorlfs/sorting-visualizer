@@ -33,15 +33,6 @@ impl Sorter for SelectionSort {
         (self.x, self.y)
     }
 
-    fn run(&mut self, array: &mut Vec<usize>) {
-        loop {
-            if self.step(array) {
-                break;
-            }
-        }
-        self.reset_state();
-    }
-
     fn step(&mut self, array: &mut Vec<usize>) -> bool {
         if self.needs_switch {
             self.switch(array);
@@ -92,7 +83,7 @@ mod tests {
     #[test]
     fn run() {
         let mut sorter = SelectionSort::new();
-        let mut arr: Vec<usize> = vec![9, 2, 8, 10, 5];
+        let mut arr = vec![9, 2, 8, 10, 5];
 
         sorter.run(&mut arr);
 
@@ -104,7 +95,7 @@ mod tests {
     #[test]
     fn step() {
         let mut sorter = SelectionSort::new();
-        let mut arr: Vec<usize> = vec![5, 2, 3];
+        let mut arr = vec![5, 2, 3];
 
         // Selects indexes 0 and 1 for comparing
         sorter.step(&mut arr);
@@ -125,7 +116,7 @@ mod tests {
     #[test]
     fn test_switch() {
         let mut sorter = SelectionSort::new();
-        let mut arr: Vec<usize> = vec![5, 2, 6];
+        let mut arr = vec![5, 2, 6];
 
         sorter.min = 1;
         sorter.switch(&mut arr);
