@@ -7,6 +7,7 @@ use crate::algorithms::{
 };
 use crate::algorithms::{Reasons, Sorter};
 use buttons::ButtonHandler;
+use eframe::egui::{Button, CentralPanel, ComboBox};
 use eframe::{
     egui::{self, Sense, Ui},
     epaint::{vec2, Color32, Rect, Stroke, Vec2},
@@ -33,8 +34,7 @@ const ROUNDING: f32 = 5.;
 const STROKE_WIDTH: f32 = 2.;
 const NUMBERS_GRID: &str = "numbers";
 const STROKE_COLOR: Color32 = Color32::WHITE;
-const WAIT_MILLIS: u64 = 120;
-const WAIT_TIME: Duration = Duration::from_millis(WAIT_MILLIS);
+const WAIT_TIME: Duration = Duration::from_millis(120);
 
 #[derive(PartialEq, Debug)]
 enum State {
@@ -121,7 +121,7 @@ impl Visualizer<'_> {
     fn handle_combox_box(&mut self, ui: &mut Ui) -> bool {
         let previous_selection: Algorithms = self.selected;
         ui.label("Algorithm:");
-        egui::ComboBox::from_id_source(0)
+        ComboBox::from_id_source(0)
             .selected_text(format!("{:?}Sort", self.selected))
             .show_ui(ui, |ui| {
                 for option in Algorithms::iter() {
@@ -144,22 +144,22 @@ impl Visualizer<'_> {
     /// Create buttons and handle their events.
     fn handle_buttons(&mut self, ui: &mut Ui) {
         if self.state == State::Running {
-            if ui.add(egui::Button::new("Stop")).clicked() {
+            if ui.add(Button::new("Stop")).clicked() {
                 self.state = State::Start;
             }
-            ui.add_enabled(false, egui::Button::new("Step"));
+            ui.add_enabled(false, Button::new("Step"));
         } else {
-            if ui.add(egui::Button::new("Start")).clicked() {
+            if ui.add(Button::new("Start")).clicked() {
                 self.state = State::Running;
             }
-            if ui.add(egui::Button::new("Step")).clicked() {
+            if ui.add(Button::new("Step")).clicked() {
                 ButtonHandler::handle_step(self);
             }
         }
-        if ui.add(egui::Button::new("Reset")).clicked() {
+        if ui.add(Button::new("Reset")).clicked() {
             ButtonHandler::handle_reset(self);
         }
-        if ui.add(egui::Button::new("Shuffle")).clicked() {
+        if ui.add(Button::new("Shuffle")).clicked() {
             ButtonHandler::handle_shuffle(self);
         }
     }
@@ -210,7 +210,7 @@ mod tests {
 
 impl eframe::App for Visualizer<'_> {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        egui::CentralPanel::default().show(ctx, |ui| {
+        CentralPanel::default().show(ctx, |ui| {
             // Horizontal is used to align the ComboBox with the buttons
             ui.horizontal(|ui| {
                 ui.add_space(CENTRALIZE_PADDING);
