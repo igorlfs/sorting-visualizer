@@ -39,6 +39,7 @@ impl Sorter for InsertionSort {
                 break;
             }
         }
+        self.reset_state();
     }
 
     fn step(&mut self, array: &mut Vec<usize>) -> bool {
@@ -51,7 +52,7 @@ impl Sorter for InsertionSort {
     }
 
     fn modify_state(&mut self, array: &[usize]) -> bool {
-        if self.curr + 1 == array.len() {
+        if self.curr == array.len() + 1 {
             return true;
         }
         self.reason = Reasons::Comparing;
@@ -64,10 +65,7 @@ impl Sorter for InsertionSort {
             self.curr += 1;
         }
         self.switched = false;
-        self.needs_switch = array[self.y] < array[self.x] && self.y > 0;
-
-        println!("needs_switch ? == {}", {self.needs_switch});
-        println!("modify_state  x, y == {}, {}", self.x, self.y);
+        self.needs_switch = self.y < array.len() && array[self.y] < array[self.x] && self.y > 0;
         false
     }
 
@@ -76,8 +74,6 @@ impl Sorter for InsertionSort {
         self.reason = Reasons::Switching;
         self.needs_switch = false;
         self.switched = true;
-        println!("needs_switch ? == {}", {self.needs_switch});
-        println!("switch  x, y == {}, {}", self.x, self.y);
     }
 
     fn reset_state(&mut self) {
