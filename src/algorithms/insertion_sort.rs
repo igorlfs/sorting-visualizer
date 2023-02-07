@@ -22,7 +22,10 @@ impl Sorter for InsertionSort {
     }
 
     fn get_special(&self) -> (usize, usize) {
-        (self.x, self.y)
+        if self.curr != 1{
+            return (self.x, self.y);
+        }
+        (usize::MAX, usize::MAX)
     }
 
     fn get_reason(&self) -> super::Reasons {
@@ -52,7 +55,7 @@ impl Sorter for InsertionSort {
     }
 
     fn modify_state(&mut self, array: &[usize]) -> bool {
-        if self.curr == array.len() + 1 {
+        if self.curr == array.len() && !self.switched{ 
             return true;
         }
         self.reason = Reasons::Comparing;
@@ -60,7 +63,7 @@ impl Sorter for InsertionSort {
             self.x -= 1;
             self.y -= 1;
         } else{
-            self.x  = self.curr - 1;
+            self.x = self.curr - 1;
             self.y = self.curr;
             self.curr += 1;
         }
@@ -79,5 +82,6 @@ impl Sorter for InsertionSort {
     fn reset_state(&mut self) {
         self.x = 0;
         self.y = 1;
+        self.curr = 1;
     }
 }
