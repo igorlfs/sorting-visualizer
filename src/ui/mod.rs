@@ -49,6 +49,8 @@ pub(crate) struct Visualizer<'a> {
     original_numbers: Vec<usize>,
     state: State,
     sorter: Box<dyn Sorter + 'a>,
+    bench: bool,
+    bench_results: Vec<u128>,
 }
 
 impl<'a> Default for Visualizer<'a> {
@@ -60,6 +62,8 @@ impl<'a> Default for Visualizer<'a> {
             state: State::Start,
             original_numbers: numbers,
             sorter: Box::new(BubbleSort::new()),
+            bench: false,
+            bench_results: (0..3).collect::<Vec<u128>>(),
         }
     }
 }
@@ -117,6 +121,17 @@ impl Visualizer<'_> {
         });
     }
 
+    fn draw_bench(&self, ui: &mut Ui) {
+        if self.bench {
+            ui.horizontal(|ui| {
+                ui.add_space(400.);
+                for (i, option) in Algorithms::iter().enumerate() {
+                    ui.label(format!("{option:?} {}", self.bench_results[i]));
+                }
+            });
+        }
+    }
+
     /// Create the ComboBox and return true if algorithm selection has been changed.
     fn handle_combox_box(&mut self, ui: &mut Ui) -> bool {
         let previous_selection: Algorithms = self.selected;
@@ -161,6 +176,10 @@ impl Visualizer<'_> {
         }
         if ui.add(Button::new("Shuffle")).clicked() {
             ButtonHandler::handle_shuffle(self);
+        }
+        if ui.add(Button::new("Benchmark")).clicked() {
+            ButtonHandler::handle_benchmark(self);
+            self.bench = true
         }
     }
 
@@ -224,6 +243,7 @@ impl eframe::App for Visualizer<'_> {
 
             ui.add_space(PADDING);
             self.draw_numbers(ui);
+            self.draw_bench(ui);
         });
     }
 }

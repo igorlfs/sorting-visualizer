@@ -29,6 +29,16 @@ impl ButtonHandler {
         app.numbers = util::gen_random_vector(FLOOR, CEIL, VECTOR_SIZE);
         app.original_numbers = app.numbers.clone();
     }
+
+    pub(super) fn handle_benchmark(app: &mut Visualizer) {
+        app.reset();
+        for (i, option) in Algorithms::iter().enumerate() {
+            app.selected = option;
+            app.switch_algorithm();
+            let time = app.sorter.run(&mut app.numbers);
+            app.bench_results[i] = time;
+        }
+    }
 }
 
 #[cfg(test)]

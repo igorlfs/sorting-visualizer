@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 pub mod bubble_sort;
 pub mod insertion_sort;
 pub mod selection_sort;
@@ -20,13 +22,16 @@ pub trait Sorter {
     fn get_state(&self) -> (usize, usize);
 
     /// Loops all states and reset state.
-    fn run(&mut self, array: &mut Vec<usize>) {
+    /// Returns time elapsed (microsseconds).
+    fn run(&mut self, array: &mut Vec<usize>) -> u128 {
+        let now = Instant::now();
         loop {
             if self.step(array) {
                 break;
             }
         }
         self.reset_state();
+        now.elapsed().as_micros()
     }
 
     /// Takes a single step in running the algorithm.
