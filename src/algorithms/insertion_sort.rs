@@ -36,15 +36,6 @@ impl Sorter for InsertionSort {
         (self.x, self.y)
     }
 
-    fn run(&mut self, array: &mut Vec<usize>) {
-        loop {
-            if self.step(array) {
-                break;
-            }
-        }
-        self.reset_state();
-    }
-    
     fn step(&mut self, array: &mut Vec<usize>) -> bool {
         if self.needs_switch {
             self.switch(array)
