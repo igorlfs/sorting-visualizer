@@ -89,6 +89,7 @@ impl Sorter for MergeSort {
     fn reset_state(&mut self) {
         self.power = 1;
         self.slice = usize::MAX;
+        self.special = (usize::MAX, usize::MAX);
     }
 }
 
