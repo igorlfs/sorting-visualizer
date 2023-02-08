@@ -21,7 +21,6 @@ enum Algorithms {
     Bubble,
     Selection,
     Insertion,
-    Bogo,
     // Merge,
     // Quick,
     // Heap,
