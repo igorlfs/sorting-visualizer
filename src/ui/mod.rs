@@ -2,6 +2,7 @@ mod buttons;
 mod constants;
 mod util;
 use self::constants::{CEIL, FLOOR, VECTOR_SIZE};
+use crate::algorithms::merge_sort::MergeSort;
 use crate::algorithms::{
     bubble_sort::BubbleSort, insertion_sort::InsertionSort, selection_sort::SelectionSort,
 };
@@ -21,7 +22,7 @@ enum Algorithms {
     Bubble,
     Selection,
     Insertion,
-    // Merge,
+    Merge,
     // Quick,
     // Heap,
 }
@@ -137,6 +138,7 @@ impl Visualizer<'_> {
             Algorithms::Bubble => Box::new(BubbleSort::new()),
             Algorithms::Selection => Box::new(SelectionSort::new()),
             Algorithms::Insertion => Box::new(InsertionSort::new()),
+            Algorithms::Merge => Box::new(MergeSort::new()),
         };
         ButtonHandler::handle_reset(self);
     }
