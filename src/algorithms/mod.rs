@@ -19,8 +19,15 @@ pub trait Sorter {
     /// Return the loop's variables
     fn get_state(&self) -> (usize, usize);
 
-    /// Runs the algorithm all at once.
-    fn run(&mut self, array: &mut Vec<usize>);
+    /// Loops all states and reset state.
+    fn run(&mut self, array: &mut Vec<usize>) {
+        loop {
+            if self.step(array) {
+                break;
+            }
+        }
+        self.reset_state();
+    }
 
     /// Takes a single step in running the algorithm.
     /// Returns true if all states have been covered.

@@ -44,7 +44,7 @@ impl Sorter for InsertionSort {
         }
         self.reset_state();
     }
-
+    
     fn step(&mut self, array: &mut Vec<usize>) -> bool {
         if self.needs_switch {
             self.switch(array)
