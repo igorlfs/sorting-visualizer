@@ -59,7 +59,7 @@ impl Sorter for InsertionSort {
             return true;
         }
         self.reason = Reasons::Comparing;
-        if self.switched && self.y > 1{
+        if self.switched && self.y > 1 {
             self.x -= 1;
             self.y -= 1;
         } else{
