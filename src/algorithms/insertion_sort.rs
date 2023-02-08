@@ -62,7 +62,7 @@ impl Sorter for InsertionSort {
         if self.switched && self.y > 1 {
             self.x -= 1;
             self.y -= 1;
-        } else{
+        } else {
             self.x = self.curr - 1;
             self.y = self.curr;
             self.curr += 1;
