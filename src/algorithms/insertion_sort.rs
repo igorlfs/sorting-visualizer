@@ -22,7 +22,7 @@ impl Sorter for InsertionSort {
     }
 
     fn get_special(&self) -> (usize, usize) {
-        if self.curr != 1{
+        if self.curr != 1 {
             return (self.x, self.y);
         }
         (usize::MAX, usize::MAX)
