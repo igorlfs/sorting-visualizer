@@ -65,6 +65,7 @@ impl Sorter for BubbleSort {
     fn reset_state(&mut self) {
         self.x = 0;
         self.y = usize::MAX;
+        self.needs_switch = false;
     }
 }
 
