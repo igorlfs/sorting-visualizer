@@ -39,7 +39,7 @@ impl Sorter for MergeSort {
         MergeSort {
             power: 1,
             slice: usize::MAX,
-            reason: Reasons::Comparing,
+            reason: Reasons::Limits,
             special: (usize::MAX, usize::MAX),
         }
     }

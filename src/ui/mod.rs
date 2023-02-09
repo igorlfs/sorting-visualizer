@@ -88,6 +88,8 @@ impl Visualizer<'_> {
                 let color = if (i == special.0 || i == special.1) && self.state != State::Finished {
                     if reason == Reasons::Comparing {
                         Color32::LIGHT_YELLOW
+                    } else if reason == Reasons::Limits {
+                        Color32::LIGHT_BLUE
                     } else {
                         Color32::LIGHT_GREEN
                     }
