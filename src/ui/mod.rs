@@ -86,12 +86,10 @@ impl Visualizer<'_> {
                 let height = (BASE_HEIGHT * self.numbers[i]) as f32;
                 let size = vec2(BASE_WIDTH, height);
                 let color = if (i == special.0 || i == special.1) && self.state != State::Finished {
-                    if reason == Reasons::Comparing {
-                        Color32::LIGHT_YELLOW
-                    } else if reason == Reasons::Limits {
-                        Color32::LIGHT_BLUE
-                    } else {
-                        Color32::LIGHT_GREEN
+                    match reason {
+                        Reasons::Comparing => Color32::LIGHT_YELLOW,
+                        Reasons::Limits => Color32::LIGHT_BLUE,
+                        Reasons::Switching => Color32::LIGHT_GREEN,
                     }
                 } else {
                     Color32::GRAY
