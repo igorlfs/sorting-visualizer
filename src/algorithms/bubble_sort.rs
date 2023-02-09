@@ -72,7 +72,7 @@ impl Sorter for BubbleSort {
 #[cfg(test)]
 mod tests {
     use crate::algorithms::bubble_sort::BubbleSort;
-    use crate::algorithms::Sorter;
+    use crate::algorithms::{Reasons, Sorter};
 
     #[test]
     fn run() {
@@ -115,6 +115,20 @@ mod tests {
         sorter.y = 0;
         sorter.switch(&mut arr);
         assert_eq!(arr, vec![2, 5, 6]);
+        assert!(!sorter.needs_switch);
+    }
+
+    #[test]
+    fn test_reset_state() {
+        let mut sorter = BubbleSort {
+            x: 10,
+            y: 10,
+            needs_switch: true,
+            reason: Reasons::Comparing,
+        };
+        sorter.reset_state();
+        assert_eq!(sorter.x, 0);
+        assert_eq!(sorter.y, usize::MAX);
         assert!(!sorter.needs_switch);
     }
 }
