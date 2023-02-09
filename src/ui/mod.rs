@@ -169,8 +169,8 @@ impl Visualizer<'_> {
     /// If running, take a step and sleep for WAIT_TIME.
     fn handle_running(&mut self) {
         if self.state == State::Running {
-            ButtonHandler::handle_step(self);
             thread::sleep(WAIT_TIME);
+            ButtonHandler::handle_step(self);
         }
     }
 

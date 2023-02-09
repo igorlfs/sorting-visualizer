@@ -12,7 +12,6 @@ The Sorting Visualizer is a WIP, the following fixes/features still need to be i
 - [ ] Implement MergeSort
 - [ ] Implement QuickSort
 - [ ] Implement HeapSort
-- [ ] Fix stop taking another step
 - [ ] Release using Github
 
 ## 💻 Build Dependencies
