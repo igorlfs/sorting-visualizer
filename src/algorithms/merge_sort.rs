@@ -67,20 +67,20 @@ impl Sorter for MergeSort {
             self.slice = 0;
             self.power *= 2;
         }
+        self.switch(array);
+        self.modify_state(array)
+    }
+
+    fn modify_state(&mut self, array: &[usize]) -> bool {
+        self.power > array.len()
+    }
+
+    fn switch(&mut self, array: &mut Vec<usize>) {
         let from = self.slice;
         let mid = self.slice + self.power - 1;
-        let to = min(self.slice + 2 * self.power - 1, size - 1);
+        let to = min(self.slice + 2 * self.power - 1, array.len() - 1);
         self.special = (from, to);
         MergeSort::merge(array, from, mid, to);
-        self.power > size
-    }
-
-    fn modify_state(&mut self, _array: &[usize]) -> bool {
-        false
-    }
-
-    fn switch(&mut self, _array: &mut Vec<usize>) {
-        todo!()
     }
 
     fn reset_state(&mut self) {
