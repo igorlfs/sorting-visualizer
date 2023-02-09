@@ -58,9 +58,6 @@ impl Sorter for MergeSort {
 
     fn step(&mut self, array: &mut Vec<usize>) -> bool {
         let size: usize = array.len();
-        if self.power >= size {
-            return true;
-        }
         if self.slice == usize::MAX {
             self.slice = 0;
         } else if self.slice < size {
@@ -75,7 +72,7 @@ impl Sorter for MergeSort {
         let to = min(self.slice + 2 * self.power - 1, size - 1);
         self.special = (from, to);
         MergeSort::merge(array, from, mid, to);
-        false
+        self.power > size
     }
 
     fn modify_state(&mut self, _array: &[usize]) -> bool {
