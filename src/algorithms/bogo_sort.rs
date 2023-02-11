@@ -2,13 +2,11 @@ use super::{Reasons, Sorter};
 use rand::thread_rng;
 use rand::seq::SliceRandom;
 
-fn is_sorted(array : &[usize]) -> bool {
-    array.windows(2).all(|w| w[0] <= w[1])
-}
-
 pub struct BogoSort{
     reason: Reasons,
-    needs_shuffle: bool
+    needs_shuffle: bool,
+    x: usize,
+    y: usize
 }
 
 impl Sorter for BogoSort {
@@ -16,14 +14,8 @@ impl Sorter for BogoSort {
         BogoSort {
             reason: Reasons::Comparing,
             needs_shuffle: false,
-        }
-    }
-
-    fn get_special(&self) -> (usize, usize) {
-        if self.y != usize::MAX {
-            (self.y, self.y + 1)
-        } else {
-            (usize::MAX, usize::MAX)
+            x: 0,
+            y: 1
         }
     }
 
@@ -32,7 +24,11 @@ impl Sorter for BogoSort {
     }
 
     fn get_state(&self) -> (usize, usize) {
-        self.curr_array
+        (self.x, self.y)
+    }
+
+    fn get_special(&self) -> (usize, usize) {
+        (self.x, self.y)
     }
 
     fn step(&mut self, array: &mut Vec<usize>) -> bool {
@@ -45,23 +41,28 @@ impl Sorter for BogoSort {
     }
 
     fn modify_state(&mut self, array: &[usize]) -> bool {
-        if is_sorted(array) {
+        if self.y == array.len() {
             return true;
         }
-        self.needs_shuffle = true;
+        self.needs_shuffle = array[self.y] < array[self.x];
+        if !self.needs_shuffle {
+            self.x += 1;
+            self.y += 1;
+        }
         self.reason = Reasons::Comparing;
         false
     }
 
     fn switch(&mut self, array: &mut Vec<usize>) {
         array.shuffle(&mut thread_rng()); 
+        self.x = 0;
+        self.y = 1;
         self.needs_shuffle = false;
         self.reason = Reasons::Switching;
     }
 
     fn reset_state(&mut self) {
-        self.x = 0;
-        self.y = usize::MAX;
+        self.needs_shuffle = false; 
     }
 }
 
