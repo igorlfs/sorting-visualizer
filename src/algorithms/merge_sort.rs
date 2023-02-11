@@ -92,6 +92,8 @@ impl Sorter for MergeSort {
 
 #[cfg(test)]
 mod tests {
+    use crate::algorithms::Reasons;
+
     use super::{MergeSort, Sorter};
 
     #[test]
@@ -104,5 +106,30 @@ mod tests {
         let expected: Vec<usize> = vec![1, 2, 3, 4, 5, 6, 7, 8];
 
         assert_eq!(arr, expected);
+    }
+
+    #[test]
+    fn merge() {
+        let mut arr = vec![9, 13, 10, 11];
+        MergeSort::merge(&mut arr, 0, 1, 3);
+
+        let expected = vec![9, 10, 11, 13];
+        assert_eq!(arr, expected);
+    }
+
+    #[test]
+    fn reset_state() {
+        let mut sorter = MergeSort {
+            power: 99,
+            slice: 1,
+            reason: Reasons::Limits,
+            special: (2, 3),
+        };
+
+        sorter.reset_state();
+
+        assert_eq!(sorter.power, 1);
+        assert_eq!(sorter.slice, usize::MAX);
+        assert_eq!(sorter.special, (usize::MAX, usize::MAX));
     }
 }

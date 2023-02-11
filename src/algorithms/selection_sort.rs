@@ -113,8 +113,6 @@ mod tests {
         assert_eq!(sorter.get_special(), (0, 1));
     }
 
-    // TODO: Test modify_state
-
     #[test]
     fn test_switch() {
         let mut sorter = SelectionSort::new();

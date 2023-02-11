@@ -16,6 +16,7 @@ impl Sorter for BubbleSort {
             reason: Reasons::Comparing,
         }
     }
+
     fn get_special(&self) -> (usize, usize) {
         if self.y != usize::MAX {
             (self.y, self.y + 1)
@@ -104,8 +105,6 @@ mod tests {
         assert_eq!(vec![2, 5], arr);
         assert_eq!(sorter.get_special(), (0, 1));
     }
-
-    // TODO: Test modify_state
 
     #[test]
     fn test_switch() {
