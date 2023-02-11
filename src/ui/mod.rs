@@ -119,7 +119,7 @@ impl Visualizer<'_> {
     }
 
     /// Create the ComboBox and return true if algorithm selection has been changed.
-    fn handle_combox_box(&mut self, ui: &mut Ui) -> bool {
+    fn handle_combo_box(&mut self, ui: &mut Ui) -> bool {
         let previous_selection: Algorithms = self.selected;
         ui.label("Algorithm:");
         ComboBox::from_id_source(0)
@@ -216,7 +216,7 @@ impl eframe::App for Visualizer<'_> {
             // Horizontal is used to align the ComboBox with the buttons
             ui.horizontal(|ui| {
                 ui.add_space(CENTRALIZE_PADDING);
-                if self.handle_combox_box(ui) {
+                if self.handle_combo_box(ui) {
                     self.switch_algorithm();
                 }
                 self.handle_buttons(ui);

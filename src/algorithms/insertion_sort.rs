@@ -3,7 +3,7 @@ use super::{Reasons, Sorter};
 pub struct InsertionSort {
     x: usize,
     y: usize,
-    curr: usize,
+    current: usize,
     needs_switch: bool,
     reason: Reasons,
     switched: bool,
@@ -14,7 +14,7 @@ impl Sorter for InsertionSort {
         InsertionSort {
             x: 0,
             y: 1,
-            curr: 1,
+            current: 1,
             needs_switch: false,
             reason: Reasons::Comparing,
             switched: false,
@@ -22,7 +22,7 @@ impl Sorter for InsertionSort {
     }
 
     fn get_special(&self) -> (usize, usize) {
-        if self.curr != 1 {
+        if self.current != 1 {
             return (self.x, self.y);
         }
         (usize::MAX, usize::MAX)
@@ -46,7 +46,7 @@ impl Sorter for InsertionSort {
     }
 
     fn modify_state(&mut self, array: &[usize]) -> bool {
-        if self.curr == array.len() && !self.switched { 
+        if self.current == array.len() && !self.switched {
             return true;
         }
         self.reason = Reasons::Comparing;
@@ -54,9 +54,9 @@ impl Sorter for InsertionSort {
             self.x -= 1;
             self.y -= 1;
         } else {
-            self.x = self.curr - 1;
-            self.y = self.curr;
-            self.curr += 1;
+            self.x = self.current - 1;
+            self.y = self.current;
+            self.current += 1;
         }
         self.switched = false;
         self.needs_switch = self.y < array.len() && array[self.y] < array[self.x] && self.y > 0;
@@ -73,6 +73,6 @@ impl Sorter for InsertionSort {
     fn reset_state(&mut self) {
         self.x = 0;
         self.y = 1;
-        self.curr = 1;
+        self.current = 1;
     }
 }
