@@ -8,7 +8,7 @@ use crate::algorithms::{
 };
 use crate::algorithms::{Reasons, Sorter};
 use buttons::ButtonHandler;
-use eframe::egui::{Button, CentralPanel, ComboBox};
+use eframe::egui::{Button, CentralPanel, ComboBox, Grid};
 use eframe::{
     egui::{self, Sense, Ui},
     epaint::{vec2, Color32, Rect, Stroke, Vec2},
@@ -29,8 +29,8 @@ enum Algorithms {
 
 const CENTRALIZE_PADDING: f32 = 300.;
 const PADDING: f32 = 10.;
-const BASE_HEIGHT: usize = 64;
-const BASE_WIDTH: f32 = 32.;
+const BASE_HEIGHT: usize = 32;
+const BASE_WIDTH: f32 = 16.;
 const ROUNDING: f32 = 5.;
 const STROKE_WIDTH: f32 = 2.;
 const NUMBERS_GRID: &str = "numbers";
@@ -101,7 +101,7 @@ impl Visualizer<'_> {
     }
 
     fn draw_numbers_helper(text: String, size: Vec2, color: Color32, ui: &mut Ui) {
-        egui::Grid::new(NUMBERS_GRID).show(ui, |ui| {
+        Grid::new(NUMBERS_GRID).show(ui, |ui| {
             ui.vertical_centered(|ui| {
                 ui.label(text);
                 ui.end_row();
