@@ -85,7 +85,7 @@ impl Visualizer<'_> {
                 let text = self.numbers[i].to_string();
                 let height = (BASE_HEIGHT * self.numbers[i]) as f32;
                 let size = vec2(BASE_WIDTH, height);
-                let color = if (i == special.0 || i == special.1) && self.state != State::Finished {
+                let mut color = if (i == special.0 || i == special.1) && self.state != State::Finished {
                     if reason == Reasons::Comparing {
                         Color32::LIGHT_YELLOW
                     } else {
@@ -94,6 +94,9 @@ impl Visualizer<'_> {
                 } else {
                     Color32::GRAY
                 };
+                if self.selected == Algorithms::Bogo && self.state == State::Finished {
+                    color = Color32::LIGHT_GREEN; 
+                }
                 Visualizer::draw_numbers_helper(text, size, color, ui);
             }
             ui.add_space(PADDING);
