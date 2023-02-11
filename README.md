@@ -6,19 +6,18 @@
 
 ### TODO
 
-The Sorting Visualizer is a WIP, the following fixes/features still need to be implemented
+WIP, the following features still need to be implemented:
 
 - [ ] Benchmarks
-- [ ] Implement MergeSort
-- [ ] Implement QuickSort
-- [ ] Implement HeapSort
+- [ ] QuickSort
+- [ ] HeapSort
 - [ ] Release using Github
 
 ## 💻 Build Dependencies
 
-* Rust 1.65+
-* `cmake`, `pkgconf`
-* Only tested on Linux, but should work on any OS.
+- Rust 1.65+
+- `cmake`, `pkgconf`
+- Only tested on Linux, but should work on any OS.
 
 ## 🚀 Build
 
@@ -31,4 +30,3 @@ cargo build
 ```
 cargo run
 ```
-
