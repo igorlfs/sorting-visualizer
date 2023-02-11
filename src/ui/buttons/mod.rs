@@ -37,6 +37,7 @@ impl ButtonHandler {
             app.switch_algorithm();
             let time = app.sorter.run(&mut app.numbers);
             app.bench_results[i] = time;
+            println!("{}", app.bench_results[i]);
         }
     }
 }
