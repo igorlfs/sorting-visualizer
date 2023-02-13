@@ -94,9 +94,6 @@ impl Visualizer<'_> {
                 } else {
                     Color32::GRAY
                 };
-                if self.selected == Algorithms::Bogo && special.0 == usize::MIN {
-                    color = Color32::LIGHT_BLUE; 
-                }
                 Visualizer::draw_numbers_helper(text, size, color, ui);
             }
             ui.add_space(PADDING);

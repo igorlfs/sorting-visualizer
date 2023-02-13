@@ -33,10 +33,10 @@ impl Sorter for BogoSort {
 
     fn get_special(&self) -> (usize, usize) {
         if self.shuffled {
-            return (usize::MIN, usize::MAX);
+            return (usize::MAX, usize::MAX);
         }
         if self.curr != 1 {
-            (self.x, self.y);
+            return (self.x, self.y);
         }
         (usize::MAX, usize::MAX)
     }
@@ -55,14 +55,14 @@ impl Sorter for BogoSort {
             return true;
         }
         if self.y < array.len() - 1 && !self.shuffled {
-            self.x += 1;
-            self.y += 1;
+            self.x = self.curr - 1;
+            self.y = self.curr;
             self.curr += 1;
         }
         if self.shuffled {
             self.x = 0;
             self.y = 1;
-            self.curr = 1;
+            self.curr = 2;
         }
         self.needs_shuffle = array[self.y] < array[self.x];
         self.reason = Reasons::Comparing;
@@ -74,7 +74,7 @@ impl Sorter for BogoSort {
         array.shuffle(&mut thread_rng()); 
         self.shuffled = true;
         self.needs_shuffle = false;
-        self.curr = 1;
+        self.curr = 2;
     }
 
     fn reset_state(&mut self) {
