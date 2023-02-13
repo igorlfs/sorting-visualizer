@@ -6,6 +6,7 @@ pub struct BogoSort{
     reason: Reasons,
     needs_shuffle: bool,
     shuffled: bool,
+    curr: usize,
     x: usize,
     y: usize
 }
@@ -16,10 +17,11 @@ impl Sorter for BogoSort {
             reason: Reasons::Comparing,
             needs_shuffle: false,
             shuffled: false,
+            curr: 1,
             x: 0,
-            y: 1
+            y: 1,
         }
-    }
+}
 
     fn get_reason(&self) -> super::Reasons {
         self.reason
@@ -31,9 +33,12 @@ impl Sorter for BogoSort {
 
     fn get_special(&self) -> (usize, usize) {
         if self.shuffled {
-            return (usize::MAX, usize::MAX);
+            return (usize::MIN, usize::MAX);
         }
-        (self.x, self.y)
+        if self.curr != 1 {
+            (self.x, self.y);
+        }
+        (usize::MAX, usize::MAX)
     }
 
     fn step(&mut self, array: &mut Vec<usize>) -> bool {
@@ -46,16 +51,18 @@ impl Sorter for BogoSort {
     }
 
     fn modify_state(&mut self, array: &[usize]) -> bool {
-        if self.y == array.len() - 1 {
+        if self.curr == array.len() {
             return true;
         }
         if self.y < array.len() - 1 && !self.shuffled {
             self.x += 1;
             self.y += 1;
+            self.curr += 1;
         }
         if self.shuffled {
             self.x = 0;
             self.y = 1;
+            self.curr = 1;
         }
         self.needs_shuffle = array[self.y] < array[self.x];
         self.reason = Reasons::Comparing;
@@ -67,6 +74,7 @@ impl Sorter for BogoSort {
         array.shuffle(&mut thread_rng()); 
         self.shuffled = true;
         self.needs_shuffle = false;
+        self.curr = 1;
     }
 
     fn reset_state(&mut self) {
@@ -74,6 +82,7 @@ impl Sorter for BogoSort {
         self.shuffled = false;
         self.x = 0;
         self.y = 1;
+        self.curr = 1;
     }
 }
 
