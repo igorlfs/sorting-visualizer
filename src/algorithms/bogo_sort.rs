@@ -27,10 +27,6 @@ impl Sorter for BogoSort {
         self.reason
     }
 
-    fn get_state(&self) -> (usize, usize) {
-        (self.x, self.y)
-    }
-
     fn get_special(&self) -> (usize, usize) {
         if self.shuffled {
             return (usize::MAX, usize::MAX);

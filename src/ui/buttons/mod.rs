@@ -78,12 +78,5 @@ mod tests {
         // And we will be comparing 2 and 5 next round
         ButtonHandler::handle_step(&mut app);
         assert_eq!(app.sorter.get_special(), (0, 1));
-
-        // We never hit the state of Finished,
-        // given that once it's set, it's used to reset the app, setting it to Start once again.
-        // However, we can still test if everything has been covered by
-        // checking if the bundle is in it's Default state
-        ButtonHandler::handle_step(&mut app);
-        assert_eq!(app.sorter.get_state(), (0, usize::MAX));
     }
 }

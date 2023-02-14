@@ -52,10 +52,6 @@ impl Sorter for MergeSort {
         self.reason
     }
 
-    fn get_state(&self) -> (usize, usize) {
-        (usize::MAX, usize::MAX)
-    }
-
     fn step(&mut self, array: &mut Vec<usize>) -> bool {
         let size: usize = array.len();
         if self.slice == usize::MAX {

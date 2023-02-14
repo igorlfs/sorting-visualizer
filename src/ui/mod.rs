@@ -209,7 +209,6 @@ mod tests {
         app.reset();
         assert_eq!(app.original_numbers, app.numbers);
         assert_eq!(app.state, State::Start);
-        assert_eq!(app.sorter.get_state(), (0, usize::MAX));
     }
 }
 

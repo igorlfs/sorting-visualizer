@@ -32,10 +32,6 @@ impl Sorter for InsertionSort {
         self.reason
     }
 
-    fn get_state(&self) -> (usize, usize) {
-        (self.x, self.y)
-    }
-
     fn step(&mut self, array: &mut Vec<usize>) -> bool {
         if self.needs_switch {
             self.switch(array)

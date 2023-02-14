@@ -18,9 +18,6 @@ pub trait Sorter {
     /// Returns the reason the special indexes are special.
     fn get_reason(&self) -> Reasons;
 
-    /// Return the loop's variables
-    fn get_state(&self) -> (usize, usize);
-
     /// Loops all states and reset state.
     fn run(&mut self, array: &mut Vec<usize>) {
         loop {
