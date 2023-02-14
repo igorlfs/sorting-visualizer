@@ -74,10 +74,6 @@ impl Sorter for BogoSort {
     }
 
     fn reset_state(&mut self) {
-        self.needs_shuffle = false;
-        self.shuffled = false;
-        self.x = 0;
-        self.y = 1;
-        self.curr = 1;
+        *self = BogoSort::new();
     }
 }

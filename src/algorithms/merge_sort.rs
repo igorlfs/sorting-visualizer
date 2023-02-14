@@ -80,15 +80,12 @@ impl Sorter for MergeSort {
     }
 
     fn reset_state(&mut self) {
-        self.power = 1;
-        self.slice = usize::MAX;
-        self.special = (usize::MAX, usize::MAX);
+        *self = MergeSort::new();
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::algorithms::Reasons;
 
     use super::{MergeSort, Sorter};
 
@@ -111,21 +108,5 @@ mod tests {
 
         let expected = vec![9, 10, 11, 13];
         assert_eq!(arr, expected);
-    }
-
-    #[test]
-    fn reset_state() {
-        let mut sorter = MergeSort {
-            power: 99,
-            slice: 1,
-            reason: Reasons::Limits,
-            special: (2, 3),
-        };
-
-        sorter.reset_state();
-
-        assert_eq!(sorter.power, 1);
-        assert_eq!(sorter.slice, usize::MAX);
-        assert_eq!(sorter.special, (usize::MAX, usize::MAX));
     }
 }

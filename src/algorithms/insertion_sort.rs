@@ -67,8 +67,6 @@ impl Sorter for InsertionSort {
     }
 
     fn reset_state(&mut self) {
-        self.x = 0;
-        self.y = 1;
-        self.curr = 1;
+        *self = InsertionSort::new();
     }
 }
