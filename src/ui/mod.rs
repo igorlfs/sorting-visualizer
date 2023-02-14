@@ -79,8 +79,8 @@ impl Visualizer<'_> {
     /// Draws rectangles representing the numbers, whose height is proportional to the number.
     /// Use the number as a centralized label.
     fn draw_numbers(&self, ui: &mut Ui) {
-        let special: (usize, usize) = self.sorter.get_special();
-        let reason: Reasons = self.sorter.get_reason();
+        let special: (usize, usize) = self.sorter.special();
+        let reason: Reasons = self.sorter.reason();
         ui.horizontal_top(|ui| {
             ui.add_space(PADDING);
             for i in 0..self.numbers.len() {

@@ -13,10 +13,10 @@ pub trait Sorter {
         Self: Sized;
 
     /// Returns the indexes currently being compared or about to switch.
-    fn get_special(&self) -> (usize, usize);
+    fn special(&self) -> (usize, usize);
 
     /// Returns the reason the special indexes are special.
-    fn get_reason(&self) -> Reasons;
+    fn reason(&self) -> Reasons;
 
     /// Loops all states and reset state.
     fn run(&mut self, array: &mut Vec<usize>) {

@@ -23,11 +23,11 @@ impl Sorter for BogoSort {
         }
     }
 
-    fn get_reason(&self) -> super::Reasons {
+    fn reason(&self) -> super::Reasons {
         self.reason
     }
 
-    fn get_special(&self) -> (usize, usize) {
+    fn special(&self) -> (usize, usize) {
         if self.shuffled {
             return (usize::MAX, usize::MAX);
         }

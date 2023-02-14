@@ -44,11 +44,11 @@ impl Sorter for MergeSort {
         }
     }
 
-    fn get_special(&self) -> (usize, usize) {
+    fn special(&self) -> (usize, usize) {
         self.special
     }
 
-    fn get_reason(&self) -> Reasons {
+    fn reason(&self) -> Reasons {
         self.reason
     }
 

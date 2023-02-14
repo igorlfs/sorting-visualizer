@@ -17,7 +17,7 @@ impl Sorter for BubbleSort {
         }
     }
 
-    fn get_special(&self) -> (usize, usize) {
+    fn special(&self) -> (usize, usize) {
         if self.y != usize::MAX {
             (self.y, self.y + 1)
         } else {
@@ -25,7 +25,7 @@ impl Sorter for BubbleSort {
         }
     }
 
-    fn get_reason(&self) -> super::Reasons {
+    fn reason(&self) -> super::Reasons {
         self.reason
     }
 
@@ -94,12 +94,12 @@ mod tests {
         // Selects indexes 0 and 1 for comparing
         sorter.step(&mut arr);
         assert_eq!(vec![5, 2], arr);
-        assert_eq!(sorter.get_special(), (0, 1));
+        assert_eq!(sorter.special(), (0, 1));
 
         // Swaps 2 and 5
         sorter.step(&mut arr);
         assert_eq!(vec![2, 5], arr);
-        assert_eq!(sorter.get_special(), (0, 1));
+        assert_eq!(sorter.special(), (0, 1));
     }
 
     #[test]

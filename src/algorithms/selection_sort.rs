@@ -21,11 +21,11 @@ impl Sorter for SelectionSort {
         }
     }
 
-    fn get_special(&self) -> (usize, usize) {
+    fn special(&self) -> (usize, usize) {
         self.special
     }
 
-    fn get_reason(&self) -> super::Reasons {
+    fn reason(&self) -> super::Reasons {
         self.reason
     }
 
@@ -97,16 +97,16 @@ mod tests {
 
         // Selects indexes 0 and 1 for comparing
         sorter.step(&mut arr);
-        assert_eq!(sorter.get_special(), (1, 0));
+        assert_eq!(sorter.special(), (1, 0));
 
         // Selects indexes 1 and 2 for comparing
         sorter.step(&mut arr);
-        assert_eq!(sorter.get_special(), (2, 1));
+        assert_eq!(sorter.special(), (2, 1));
 
         // Swaps 2 and 5
         sorter.step(&mut arr);
         assert_eq!(vec![2, 5, 3], arr);
-        assert_eq!(sorter.get_special(), (0, 1));
+        assert_eq!(sorter.special(), (0, 1));
     }
 
     #[test]

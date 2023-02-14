@@ -21,14 +21,14 @@ impl Sorter for InsertionSort {
         }
     }
 
-    fn get_special(&self) -> (usize, usize) {
+    fn special(&self) -> (usize, usize) {
         if self.curr != 1 {
             return (self.x, self.y);
         }
         (usize::MAX, usize::MAX)
     }
 
-    fn get_reason(&self) -> super::Reasons {
+    fn reason(&self) -> super::Reasons {
         self.reason
     }
 
