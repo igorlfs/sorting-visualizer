@@ -3,7 +3,8 @@ mod constants;
 mod util;
 use self::constants::{CEIL, FLOOR, VECTOR_SIZE};
 use crate::algorithms::{
-    bubble_sort::BubbleSort, insertion_sort::InsertionSort, selection_sort::SelectionSort, bogo_sort::BogoSort,
+    bogo_sort::BogoSort, bubble_sort::BubbleSort, insertion_sort::InsertionSort,
+    selection_sort::SelectionSort,
 };
 use crate::algorithms::{Reasons, Sorter};
 use buttons::ButtonHandler;
@@ -85,15 +86,16 @@ impl Visualizer<'_> {
                 let text = self.numbers[i].to_string();
                 let height = (BASE_HEIGHT * self.numbers[i]) as f32;
                 let size = vec2(BASE_WIDTH, height);
-                let mut color = if (i == special.0 || i == special.1) && self.state != State::Finished {
-                    if reason == Reasons::Comparing {
-                        Color32::LIGHT_YELLOW
+                let mut color =
+                    if (i == special.0 || i == special.1) && self.state != State::Finished {
+                        if reason == Reasons::Comparing {
+                            Color32::LIGHT_YELLOW
+                        } else {
+                            Color32::LIGHT_GREEN
+                        }
                     } else {
-                        Color32::LIGHT_GREEN
-                    }
-                } else {
-                    Color32::GRAY
-                };
+                        Color32::GRAY
+                    };
                 Visualizer::draw_numbers_helper(text, size, color, ui);
             }
             ui.add_space(PADDING);

@@ -1,14 +1,14 @@
 use super::{Reasons, Sorter};
-use rand::thread_rng;
 use rand::seq::SliceRandom;
+use rand::thread_rng;
 
-pub struct BogoSort{
+pub struct BogoSort {
     reason: Reasons,
     needs_shuffle: bool,
     shuffled: bool,
     curr: usize,
     x: usize,
-    y: usize
+    y: usize,
 }
 
 impl Sorter for BogoSort {
@@ -21,7 +21,7 @@ impl Sorter for BogoSort {
             x: 0,
             y: 1,
         }
-}
+    }
 
     fn get_reason(&self) -> super::Reasons {
         self.reason
@@ -71,18 +71,17 @@ impl Sorter for BogoSort {
     }
 
     fn switch(&mut self, array: &mut Vec<usize>) {
-        array.shuffle(&mut thread_rng()); 
+        array.shuffle(&mut thread_rng());
         self.shuffled = true;
         self.needs_shuffle = false;
         self.curr = 2;
     }
 
     fn reset_state(&mut self) {
-        self.needs_shuffle = false; 
+        self.needs_shuffle = false;
         self.shuffled = false;
         self.x = 0;
         self.y = 1;
         self.curr = 1;
     }
 }
-

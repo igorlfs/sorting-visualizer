@@ -46,7 +46,7 @@ impl Sorter for InsertionSort {
     }
 
     fn modify_state(&mut self, array: &[usize]) -> bool {
-        if self.curr == array.len() && !self.switched { 
+        if self.curr == array.len() && !self.switched {
             return true;
         }
         self.reason = Reasons::Comparing;
