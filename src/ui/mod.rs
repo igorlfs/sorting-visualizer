@@ -2,13 +2,14 @@ mod buttons;
 mod constants;
 mod util;
 use self::constants::{CEIL, FLOOR, VECTOR_SIZE};
+use crate::algorithms::merge_sort::MergeSort;
 use crate::algorithms::{
     bogo_sort::BogoSort, bubble_sort::BubbleSort, insertion_sort::InsertionSort,
     selection_sort::SelectionSort,
 };
 use crate::algorithms::{Reasons, Sorter};
 use buttons::ButtonHandler;
-use eframe::egui::{Button, CentralPanel, ComboBox};
+use eframe::egui::{Button, CentralPanel, ComboBox, Grid};
 use eframe::{
     egui::{self, Sense, Ui},
     epaint::{vec2, Color32, Rect, Stroke, Vec2},
@@ -22,16 +23,16 @@ enum Algorithms {
     Bubble,
     Selection,
     Insertion,
+    Merge,
     Bogo,
-    // Merge,
     // Quick,
     // Heap,
 }
 
 const CENTRALIZE_PADDING: f32 = 300.;
 const PADDING: f32 = 10.;
-const BASE_HEIGHT: usize = 64;
-const BASE_WIDTH: f32 = 32.;
+const BASE_HEIGHT: usize = 32;
+const BASE_WIDTH: f32 = 16.;
 const ROUNDING: f32 = 5.;
 const STROKE_WIDTH: f32 = 2.;
 const NUMBERS_GRID: &str = "numbers";
@@ -86,16 +87,15 @@ impl Visualizer<'_> {
                 let text = self.numbers[i].to_string();
                 let height = (BASE_HEIGHT * self.numbers[i]) as f32;
                 let size = vec2(BASE_WIDTH, height);
-                let mut color =
-                    if (i == special.0 || i == special.1) && self.state != State::Finished {
-                        if reason == Reasons::Comparing {
-                            Color32::LIGHT_YELLOW
-                        } else {
-                            Color32::LIGHT_GREEN
-                        }
-                    } else {
-                        Color32::GRAY
-                    };
+                let color = if (i == special.0 || i == special.1) && self.state != State::Finished {
+                    match reason {
+                        Reasons::Comparing => Color32::LIGHT_YELLOW,
+                        Reasons::Limits => Color32::LIGHT_BLUE,
+                        Reasons::Switching => Color32::LIGHT_GREEN,
+                    }
+                } else {
+                    Color32::GRAY
+                };
                 Visualizer::draw_numbers_helper(text, size, color, ui);
             }
             ui.add_space(PADDING);
@@ -103,7 +103,7 @@ impl Visualizer<'_> {
     }
 
     fn draw_numbers_helper(text: String, size: Vec2, color: Color32, ui: &mut Ui) {
-        egui::Grid::new(NUMBERS_GRID).show(ui, |ui| {
+        Grid::new(NUMBERS_GRID).show(ui, |ui| {
             ui.vertical_centered(|ui| {
                 ui.label(text);
                 ui.end_row();
@@ -121,7 +121,7 @@ impl Visualizer<'_> {
     }
 
     /// Create the ComboBox and return true if algorithm selection has been changed.
-    fn handle_combox_box(&mut self, ui: &mut Ui) -> bool {
+    fn handle_combo_box(&mut self, ui: &mut Ui) -> bool {
         let previous_selection: Algorithms = self.selected;
         ui.label("Algorithm:");
         ComboBox::from_id_source(0)
@@ -140,6 +140,7 @@ impl Visualizer<'_> {
             Algorithms::Bubble => Box::new(BubbleSort::new()),
             Algorithms::Selection => Box::new(SelectionSort::new()),
             Algorithms::Insertion => Box::new(InsertionSort::new()),
+            Algorithms::Merge => Box::new(MergeSort::new()),
             Algorithms::Bogo => Box::new(BogoSort::new()),
         };
         ButtonHandler::handle_reset(self);
@@ -171,8 +172,8 @@ impl Visualizer<'_> {
     /// If running, take a step and sleep for WAIT_TIME.
     fn handle_running(&mut self) {
         if self.state == State::Running {
-            ButtonHandler::handle_step(self);
             thread::sleep(WAIT_TIME);
+            ButtonHandler::handle_step(self);
         }
     }
 
@@ -218,7 +219,7 @@ impl eframe::App for Visualizer<'_> {
             // Horizontal is used to align the ComboBox with the buttons
             ui.horizontal(|ui| {
                 ui.add_space(CENTRALIZE_PADDING);
-                if self.handle_combox_box(ui) {
+                if self.handle_combo_box(ui) {
                     self.switch_algorithm();
                 }
                 self.handle_buttons(ui);

@@ -78,6 +78,8 @@ impl Sorter for SelectionSort {
 
 #[cfg(test)]
 mod tests {
+    use crate::algorithms::Reasons;
+
     use super::{SelectionSort, Sorter};
 
     #[test]
@@ -111,8 +113,6 @@ mod tests {
         assert_eq!(sorter.get_special(), (0, 1));
     }
 
-    // TODO: Test modify_state
-
     #[test]
     fn test_switch() {
         let mut sorter = SelectionSort::new();
@@ -125,5 +125,22 @@ mod tests {
         assert_eq!(sorter.x, sorter.min);
         assert_eq!(sorter.y, 2);
         assert!(!sorter.needs_switch);
+    }
+
+    #[test]
+    fn test_reset_state() {
+        let mut sorter = SelectionSort {
+            x: 10,
+            y: 10,
+            min: 99,
+            needs_switch: true,
+            special: (1, 1),
+            reason: Reasons::Comparing,
+        };
+        sorter.reset_state();
+        assert_eq!(sorter.x, 0);
+        assert_eq!(sorter.y, 1);
+        assert_eq!(sorter.min, 0);
+        assert_eq!(sorter.special, (usize::MAX, usize::MAX));
     }
 }

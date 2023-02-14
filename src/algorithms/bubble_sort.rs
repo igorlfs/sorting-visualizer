@@ -16,6 +16,7 @@ impl Sorter for BubbleSort {
             reason: Reasons::Comparing,
         }
     }
+
     fn get_special(&self) -> (usize, usize) {
         if self.y != usize::MAX {
             (self.y, self.y + 1)
@@ -65,13 +66,14 @@ impl Sorter for BubbleSort {
     fn reset_state(&mut self) {
         self.x = 0;
         self.y = usize::MAX;
+        self.needs_switch = false;
     }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::algorithms::bubble_sort::BubbleSort;
-    use crate::algorithms::Sorter;
+    use crate::algorithms::{Reasons, Sorter};
 
     #[test]
     fn run() {
@@ -104,8 +106,6 @@ mod tests {
         assert_eq!(sorter.get_special(), (0, 1));
     }
 
-    // TODO: Test modify_state
-
     #[test]
     fn test_switch() {
         let mut sorter = BubbleSort::new();
@@ -114,6 +114,20 @@ mod tests {
         sorter.y = 0;
         sorter.switch(&mut arr);
         assert_eq!(arr, vec![2, 5, 6]);
+        assert!(!sorter.needs_switch);
+    }
+
+    #[test]
+    fn test_reset_state() {
+        let mut sorter = BubbleSort {
+            x: 10,
+            y: 10,
+            needs_switch: true,
+            reason: Reasons::Comparing,
+        };
+        sorter.reset_state();
+        assert_eq!(sorter.x, 0);
+        assert_eq!(sorter.y, usize::MAX);
         assert!(!sorter.needs_switch);
     }
 }
