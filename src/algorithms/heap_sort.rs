@@ -126,22 +126,27 @@ impl Sorter for HeapSort {
 
 #[cfg(test)]
 mod tests {
-    use crate::{algorithms::Sorter, util};
-
     use super::HeapSort;
+    use crate::{
+        algorithms::{
+            constants::{CEIL, FLOOR, REPETITIONS, SIZE},
+            Sorter,
+        },
+        util,
+    };
 
     #[test]
     fn run() {
-        for _ in 0..10 {
+        for _ in 0..REPETITIONS {
             let mut sorter = HeapSort::new();
-            let mut arr = util::gen_random_vector(0, 100, 30);
+            let mut array = util::gen_random_vector(FLOOR, CEIL, SIZE);
 
-            let mut expected = arr.clone();
+            let mut expected = array.clone();
             expected.sort();
 
-            sorter.run(&mut arr);
+            sorter.run(&mut array);
 
-            assert_eq!(arr, expected);
+            assert_eq!(array, expected);
         }
     }
 }

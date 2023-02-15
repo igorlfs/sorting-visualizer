@@ -70,3 +70,30 @@ impl Sorter for InsertionSort {
         *self = InsertionSort::new();
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::InsertionSort;
+    use crate::{
+        algorithms::{
+            constants::{CEIL, FLOOR, REPETITIONS, SIZE},
+            Sorter,
+        },
+        util,
+    };
+
+    #[test]
+    fn run() {
+        for _ in 0..REPETITIONS {
+            let mut sorter = InsertionSort::new();
+            let mut array = util::gen_random_vector(FLOOR, CEIL, SIZE);
+
+            let mut expected = array.clone();
+            expected.sort();
+
+            sorter.run(&mut array);
+
+            assert_eq!(array, expected);
+        }
+    }
+}

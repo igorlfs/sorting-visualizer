@@ -87,18 +87,28 @@ impl Sorter for MergeSort {
 #[cfg(test)]
 mod tests {
 
-    use super::{MergeSort, Sorter};
+    use super::MergeSort;
+    use crate::{
+        algorithms::{
+            constants::{CEIL, FLOOR, REPETITIONS, SIZE},
+            Sorter,
+        },
+        util,
+    };
 
     #[test]
     fn run() {
-        let mut sorter = MergeSort::new();
-        let mut arr: Vec<usize> = vec![6, 5, 3, 1, 8, 7, 2, 4];
+        for _ in 0..REPETITIONS {
+            let mut sorter = MergeSort::new();
+            let mut array = util::gen_random_vector(FLOOR, CEIL, SIZE);
 
-        sorter.run(&mut arr);
+            let mut expected = array.clone();
+            expected.sort();
 
-        let expected: Vec<usize> = vec![1, 2, 3, 4, 5, 6, 7, 8];
+            sorter.run(&mut array);
 
-        assert_eq!(arr, expected);
+            assert_eq!(array, expected);
+        }
     }
 
     #[test]

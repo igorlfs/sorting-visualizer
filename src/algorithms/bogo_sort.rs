@@ -77,3 +77,33 @@ impl Sorter for BogoSort {
         *self = BogoSort::new();
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::BogoSort;
+    use crate::{
+        algorithms::{
+            constants::{CEIL, FLOOR, REPETITIONS},
+            Sorter,
+        },
+        util,
+    };
+
+    #[test]
+    fn run() {
+        // BogoSort is extremely slow, so we use a smaller size
+        let size = 4;
+
+        for _ in 0..REPETITIONS {
+            let mut sorter = BogoSort::new();
+            let mut array = util::gen_random_vector(FLOOR, CEIL, size);
+
+            let mut expected = array.clone();
+            expected.sort();
+
+            sorter.run(&mut array);
+
+            assert_eq!(array, expected);
+        }
+    }
+}

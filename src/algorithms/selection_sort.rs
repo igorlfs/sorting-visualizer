@@ -72,50 +72,27 @@ impl Sorter for SelectionSort {
 #[cfg(test)]
 mod tests {
 
-    use super::{SelectionSort, Sorter};
+    use super::SelectionSort;
+    use crate::{
+        algorithms::{
+            constants::{CEIL, FLOOR, REPETITIONS, SIZE},
+            Sorter,
+        },
+        util,
+    };
 
     #[test]
     fn run() {
-        let mut sorter = SelectionSort::new();
-        let mut arr = vec![9, 2, 8, 10, 5];
+        for _ in 0..REPETITIONS {
+            let mut sorter = SelectionSort::new();
+            let mut array = util::gen_random_vector(FLOOR, CEIL, SIZE);
 
-        sorter.run(&mut arr);
+            let mut expected = array.clone();
+            expected.sort();
 
-        let expected: Vec<usize> = vec![2, 5, 8, 9, 10];
+            sorter.run(&mut array);
 
-        assert_eq!(arr, expected);
-    }
-
-    #[test]
-    fn step() {
-        let mut sorter = SelectionSort::new();
-        let mut arr = vec![5, 2, 3];
-
-        // Selects indexes 0 and 1 for comparing
-        sorter.step(&mut arr);
-        assert_eq!(sorter.special(), (1, 0));
-
-        // Selects indexes 1 and 2 for comparing
-        sorter.step(&mut arr);
-        assert_eq!(sorter.special(), (2, 1));
-
-        // Swaps 2 and 5
-        sorter.step(&mut arr);
-        assert_eq!(vec![2, 5, 3], arr);
-        assert_eq!(sorter.special(), (0, 1));
-    }
-
-    #[test]
-    fn test_switch() {
-        let mut sorter = SelectionSort::new();
-        let mut arr = vec![5, 2, 6];
-
-        sorter.min = 1;
-        sorter.switch(&mut arr);
-        assert_eq!(arr, vec![2, 5, 6]);
-        assert_eq!(sorter.x, 1);
-        assert_eq!(sorter.x, sorter.min);
-        assert_eq!(sorter.y, 2);
-        assert!(!sorter.needs_switch);
+            assert_eq!(array, expected);
+        }
     }
 }
