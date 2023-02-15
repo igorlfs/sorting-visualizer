@@ -12,7 +12,7 @@ use buttons::ButtonHandler;
 use eframe::egui::{Button, CentralPanel, ComboBox, Grid};
 use eframe::{
     egui::{self, Sense, Ui},
-    epaint::{vec2, Color32, Rect, Stroke, Vec2},
+    epaint::{vec2, Color32, Rect, Stroke, Vec2, Pos2},
 };
 use std::{thread, time::Duration};
 use strum::IntoEnumIterator;
@@ -105,10 +105,13 @@ impl Visualizer<'_> {
     fn draw_numbers_helper(text: String, size: Vec2, color: Color32, ui: &mut Ui) {
         Grid::new(NUMBERS_GRID).show(ui, |ui| {
             ui.vertical_centered(|ui| {
-                ui.label(text);
+
+                ui.label(text.clone());
                 ui.end_row();
 
-                let rect: Rect = ui.allocate_exact_size(size, Sense::hover()).0;
+                let mut rect: Rect = ui.allocate_exact_size(size, Sense::hover()).0;
+                rect.min.y = (680 - text.parse::<usize>().unwrap() * BASE_HEIGHT) as f32;  
+                rect.max.y = 680.0;
                 ui.painter().rect(
                     rect,
                     ROUNDING,
@@ -116,6 +119,7 @@ impl Visualizer<'_> {
                     Stroke::new(STROKE_WIDTH, STROKE_COLOR),
                 );
                 ui.end_row();
+
             });
         });
     }
