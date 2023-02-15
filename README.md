@@ -10,7 +10,6 @@ WIP, the following features still need to be implemented:
 
 - [ ] Benchmarks
 - [ ] QuickSort
-- [ ] HeapSort
 - [ ] Release using Github
 
 ## 💻 Build Dependencies

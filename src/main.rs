@@ -2,6 +2,7 @@ use eframe::{epaint::Vec2, run_native, NativeOptions};
 
 mod algorithms;
 mod ui;
+mod util;
 
 fn main() {
     let native_options = NativeOptions {
