@@ -16,5 +16,5 @@ fn main() {
         native_options,
         Box::new(|cc| Box::new(ui::Visualizer::new(cc))),
     )
-    .ok();
+    .unwrap();
 }
