@@ -116,7 +116,7 @@ impl Visualizer<'_> {
                     Stroke::new(STROKE_WIDTH, STROKE_COLOR),
                 );
                 ui.end_row();
-                ui.add_space(641.0 - (text.parse::<usize>().unwrap() * BASE_HEIGHT) as f32);
+                ui.add_space(646.0 - (text.parse::<usize>().unwrap() * BASE_HEIGHT) as f32);
                 ui.label(text.clone());
                 ui.end_row();
 
