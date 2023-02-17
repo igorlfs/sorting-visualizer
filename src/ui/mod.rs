@@ -106,9 +106,6 @@ impl Visualizer<'_> {
         Grid::new(NUMBERS_GRID).show(ui, |ui| {
             ui.vertical_centered(|ui| {
 
-                ui.label(text.clone());
-                ui.end_row();
-
                 let mut rect: Rect = ui.allocate_exact_size(size, Sense::hover()).0;
                 rect.min.y = (680 - text.parse::<usize>().unwrap() * BASE_HEIGHT) as f32;  
                 rect.max.y = 680.0;
@@ -118,6 +115,9 @@ impl Visualizer<'_> {
                     color,
                     Stroke::new(STROKE_WIDTH, STROKE_COLOR),
                 );
+                ui.end_row();
+                ui.add_space(641.0 - (text.parse::<usize>().unwrap() * BASE_HEIGHT) as f32);
+                ui.label(text.clone());
                 ui.end_row();
 
             });
