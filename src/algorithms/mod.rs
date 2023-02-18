@@ -49,5 +49,4 @@ pub trait Sorter {
 pub enum Reasons {
     Comparing,
     Switching,
-    Limits,
 }

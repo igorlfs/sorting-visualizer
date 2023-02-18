@@ -28,7 +28,7 @@ impl Sorter for MergeSort {
         MergeSort {
             power: 1,
             slice: usize::MAX,
-            reason: Reasons::Limits,
+            reason: Reasons::Comparing,
             special: (usize::MAX, usize::MAX),
             state: State::Init,
             temp: vec![],
