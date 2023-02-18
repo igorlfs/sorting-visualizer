@@ -16,7 +16,8 @@ impl Sorter for BubbleSort {
             reason: Reasons::Comparing,
         }
     }
-    fn get_special(&self) -> (usize, usize) {
+
+    fn special(&self) -> (usize, usize) {
         if self.y != usize::MAX {
             (self.y, self.y + 1)
         } else {
@@ -24,12 +25,8 @@ impl Sorter for BubbleSort {
         }
     }
 
-    fn get_reason(&self) -> super::Reasons {
+    fn reason(&self) -> super::Reasons {
         self.reason
-    }
-
-    fn get_state(&self) -> (usize, usize) {
-        (self.x, self.y)
     }
 
     fn step(&mut self, array: &mut Vec<usize>) -> bool {
@@ -63,57 +60,33 @@ impl Sorter for BubbleSort {
     }
 
     fn reset_state(&mut self) {
-        self.x = 0;
-        self.y = usize::MAX;
+        *self = BubbleSort::new();
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::algorithms::bubble_sort::BubbleSort;
-    use crate::algorithms::Sorter;
+    use super::BubbleSort;
+    use crate::{
+        algorithms::{
+            constants::{CEIL, FLOOR, REPETITIONS, SIZE},
+            Sorter,
+        },
+        util,
+    };
 
     #[test]
     fn run() {
-        let mut sorter = BubbleSort::new();
-        let mut arr = vec![5, 2, 6];
+        for _ in 0..REPETITIONS {
+            let mut sorter = BubbleSort::new();
+            let mut array = util::gen_random_vector(FLOOR, CEIL, SIZE);
 
-        sorter.run(&mut arr);
+            let mut expected = array.clone();
+            expected.sort();
 
-        let expected: Vec<usize> = vec![2, 5, 6];
+            sorter.run(&mut array);
 
-        assert_eq!(arr, expected);
-
-        // We must reset after running
-        assert_eq!((sorter.x, sorter.y), (0, usize::MAX))
-    }
-
-    #[test]
-    fn step() {
-        let mut sorter = BubbleSort::new();
-        let mut arr = vec![5, 2];
-
-        // Selects indexes 0 and 1 for comparing
-        sorter.step(&mut arr);
-        assert_eq!(vec![5, 2], arr);
-        assert_eq!(sorter.get_special(), (0, 1));
-
-        // Swaps 2 and 5
-        sorter.step(&mut arr);
-        assert_eq!(vec![2, 5], arr);
-        assert_eq!(sorter.get_special(), (0, 1));
-    }
-
-    // TODO: Test modify_state
-
-    #[test]
-    fn test_switch() {
-        let mut sorter = BubbleSort::new();
-        let mut arr = vec![5, 2, 6];
-
-        sorter.y = 0;
-        sorter.switch(&mut arr);
-        assert_eq!(arr, vec![2, 5, 6]);
-        assert!(!sorter.needs_switch);
+            assert_eq!(array, expected);
+        }
     }
 }

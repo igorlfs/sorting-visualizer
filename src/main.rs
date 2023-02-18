@@ -1,16 +1,20 @@
-use eframe::epaint::Vec2;
+use eframe::{epaint::Vec2, run_native, NativeOptions};
 
+#[macro_use]
+extern crate cfg_if;
 mod algorithms;
 mod ui;
+mod util;
 
 fn main() {
-    let native_options = eframe::NativeOptions {
+    let native_options = NativeOptions {
         initial_window_size: Some(Vec2::new(990., 710.)),
         ..Default::default()
     };
-    eframe::run_native(
+    run_native(
         "Visualizer",
         native_options,
         Box::new(|cc| Box::new(ui::Visualizer::new(cc))),
-    );
+    )
+    .unwrap();
 }

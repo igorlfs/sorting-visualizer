@@ -1,15 +1,15 @@
 mod buttons;
 mod constants;
-mod util;
 use self::constants::{CEIL, FLOOR, VECTOR_SIZE};
 use crate::algorithms::{
-    bubble_sort::BubbleSort, insertion_sort::InsertionSort, selection_sort::SelectionSort,
+    bogo_sort::BogoSort, bubble_sort::BubbleSort, heap_sort::HeapSort,
+    insertion_sort::InsertionSort, merge_sort::MergeSort, selection_sort::SelectionSort, Reasons,
+    Sorter,
 };
-use crate::algorithms::{Reasons, Sorter};
+use crate::util;
 use buttons::ButtonHandler;
-use eframe::egui::{Button, CentralPanel, ComboBox};
 use eframe::{
-    egui::{self, Sense, Ui},
+    egui::{self, Button, CentralPanel, ComboBox, Grid, Sense, Ui},
     epaint::{vec2, Color32, Rect, Stroke, Vec2},
 };
 use std::{thread, time::Duration};
@@ -21,15 +21,16 @@ enum Algorithms {
     Bubble,
     Selection,
     Insertion,
-    // Merge,
+    Merge,
+    Bogo,
     // Quick,
-    // Heap,
+    Heap,
 }
 
 const CENTRALIZE_PADDING: f32 = 300.;
 const PADDING: f32 = 10.;
-const BASE_HEIGHT: usize = 64;
-const BASE_WIDTH: f32 = 32.;
+const BASE_HEIGHT: usize = 32;
+const BASE_WIDTH: f32 = 16.;
 const ROUNDING: f32 = 5.;
 const STROKE_WIDTH: f32 = 2.;
 const NUMBERS_GRID: &str = "numbers";
@@ -80,8 +81,8 @@ impl Visualizer<'_> {
     /// Draws rectangles representing the numbers, whose height is proportional to the number.
     /// Use the number as a centralized label.
     fn draw_numbers(&self, ui: &mut Ui) {
-        let special: (usize, usize) = self.sorter.get_special();
-        let reason: Reasons = self.sorter.get_reason();
+        let special: (usize, usize) = self.sorter.special();
+        let reason: Reasons = self.sorter.reason();
         ui.horizontal_top(|ui| {
             ui.add_space(PADDING);
             for i in 0..self.numbers.len() {
@@ -89,10 +90,9 @@ impl Visualizer<'_> {
                 let height = (BASE_HEIGHT * self.numbers[i]) as f32;
                 let size = vec2(BASE_WIDTH, height);
                 let color = if (i == special.0 || i == special.1) && self.state != State::Finished {
-                    if reason == Reasons::Comparing {
-                        Color32::LIGHT_YELLOW
-                    } else {
-                        Color32::LIGHT_GREEN
+                    match reason {
+                        Reasons::Comparing => Color32::LIGHT_YELLOW,
+                        Reasons::Switching => Color32::LIGHT_GREEN,
                     }
                 } else {
                     Color32::GRAY
@@ -104,7 +104,7 @@ impl Visualizer<'_> {
     }
 
     fn draw_numbers_helper(text: String, size: Vec2, color: Color32, ui: &mut Ui) {
-        egui::Grid::new(NUMBERS_GRID).show(ui, |ui| {
+        Grid::new(NUMBERS_GRID).show(ui, |ui| {
             ui.vertical_centered(|ui| {
                 ui.label(text);
                 ui.end_row();
@@ -133,7 +133,7 @@ impl Visualizer<'_> {
     }
 
     /// Create the ComboBox and return true if algorithm selection has been changed.
-    fn handle_combox_box(&mut self, ui: &mut Ui) -> bool {
+    fn handle_combo_box(&mut self, ui: &mut Ui) -> bool {
         let previous_selection: Algorithms = self.selected;
         ui.label("Algorithm:");
         ComboBox::from_id_source(0)
@@ -152,6 +152,9 @@ impl Visualizer<'_> {
             Algorithms::Bubble => Box::new(BubbleSort::new()),
             Algorithms::Selection => Box::new(SelectionSort::new()),
             Algorithms::Insertion => Box::new(InsertionSort::new()),
+            Algorithms::Merge => Box::new(MergeSort::new()),
+            Algorithms::Bogo => Box::new(BogoSort::new()),
+            Algorithms::Heap => Box::new(HeapSort::new()),
         };
         ButtonHandler::handle_reset(self);
     }
@@ -186,8 +189,8 @@ impl Visualizer<'_> {
     /// If running, take a step and sleep for WAIT_TIME.
     fn handle_running(&mut self) {
         if self.state == State::Running {
-            ButtonHandler::handle_step(self);
             thread::sleep(WAIT_TIME);
+            ButtonHandler::handle_step(self);
         }
     }
 
@@ -223,7 +226,6 @@ mod tests {
         app.reset();
         assert_eq!(app.original_numbers, app.numbers);
         assert_eq!(app.state, State::Start);
-        assert_eq!(app.sorter.get_state(), (0, usize::MAX));
     }
 }
 
@@ -233,7 +235,7 @@ impl eframe::App for Visualizer<'_> {
             // Horizontal is used to align the ComboBox with the buttons
             ui.horizontal(|ui| {
                 ui.add_space(CENTRALIZE_PADDING);
-                if self.handle_combox_box(ui) {
+                if self.handle_combo_box(ui) {
                     self.switch_algorithm();
                 }
                 self.handle_buttons(ui);

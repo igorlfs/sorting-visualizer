@@ -21,16 +21,12 @@ impl Sorter for SelectionSort {
         }
     }
 
-    fn get_special(&self) -> (usize, usize) {
+    fn special(&self) -> (usize, usize) {
         self.special
     }
 
-    fn get_reason(&self) -> super::Reasons {
+    fn reason(&self) -> super::Reasons {
         self.reason
-    }
-
-    fn get_state(&self) -> (usize, usize) {
-        (self.x, self.y)
     }
 
     fn step(&mut self, array: &mut Vec<usize>) -> bool {
@@ -69,61 +65,34 @@ impl Sorter for SelectionSort {
     }
 
     fn reset_state(&mut self) {
-        self.x = 0;
-        self.y = 1;
-        self.min = 0;
-        self.special = (usize::MAX, usize::MAX);
+        *self = SelectionSort::new();
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{SelectionSort, Sorter};
+
+    use super::SelectionSort;
+    use crate::{
+        algorithms::{
+            constants::{CEIL, FLOOR, REPETITIONS, SIZE},
+            Sorter,
+        },
+        util,
+    };
 
     #[test]
     fn run() {
-        let mut sorter = SelectionSort::new();
-        let mut arr = vec![9, 2, 8, 10, 5];
+        for _ in 0..REPETITIONS {
+            let mut sorter = SelectionSort::new();
+            let mut array = util::gen_random_vector(FLOOR, CEIL, SIZE);
 
-        sorter.run(&mut arr);
+            let mut expected = array.clone();
+            expected.sort();
 
-        let expected: Vec<usize> = vec![2, 5, 8, 9, 10];
+            sorter.run(&mut array);
 
-        assert_eq!(arr, expected);
-    }
-
-    #[test]
-    fn step() {
-        let mut sorter = SelectionSort::new();
-        let mut arr = vec![5, 2, 3];
-
-        // Selects indexes 0 and 1 for comparing
-        sorter.step(&mut arr);
-        assert_eq!(sorter.get_special(), (1, 0));
-
-        // Selects indexes 1 and 2 for comparing
-        sorter.step(&mut arr);
-        assert_eq!(sorter.get_special(), (2, 1));
-
-        // Swaps 2 and 5
-        sorter.step(&mut arr);
-        assert_eq!(vec![2, 5, 3], arr);
-        assert_eq!(sorter.get_special(), (0, 1));
-    }
-
-    // TODO: Test modify_state
-
-    #[test]
-    fn test_switch() {
-        let mut sorter = SelectionSort::new();
-        let mut arr = vec![5, 2, 6];
-
-        sorter.min = 1;
-        sorter.switch(&mut arr);
-        assert_eq!(arr, vec![2, 5, 6]);
-        assert_eq!(sorter.x, 1);
-        assert_eq!(sorter.x, sorter.min);
-        assert_eq!(sorter.y, 2);
-        assert!(!sorter.needs_switch);
+            assert_eq!(array, expected);
+        }
     }
 }

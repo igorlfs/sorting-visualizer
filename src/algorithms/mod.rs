@@ -1,7 +1,10 @@
 use std::time::Instant;
-
+pub mod bogo_sort;
 pub mod bubble_sort;
+mod constants;
+pub mod heap_sort;
 pub mod insertion_sort;
+pub mod merge_sort;
 pub mod selection_sort;
 /// A Sorter is a sorting algorithm split in two stages: the `step` and the `state`.
 /// A `step` can be any single step an algorithm takes, such as comparing or switching numbers
@@ -13,13 +16,10 @@ pub trait Sorter {
         Self: Sized;
 
     /// Returns the indexes currently being compared or about to switch.
-    fn get_special(&self) -> (usize, usize);
+    fn special(&self) -> (usize, usize);
 
     /// Returns the reason the special indexes are special.
-    fn get_reason(&self) -> Reasons;
-
-    /// Return the loop's variables
-    fn get_state(&self) -> (usize, usize);
+    fn reason(&self) -> Reasons;
 
     /// Loops all states and reset state.
     /// Returns time elapsed (microsseconds).
