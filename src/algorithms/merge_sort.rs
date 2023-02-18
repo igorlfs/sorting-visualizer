@@ -2,36 +2,25 @@ use std::cmp::min;
 
 use super::{Reasons, Sorter};
 
+#[derive(PartialEq)]
+enum State {
+    Init,
+    Comparing,
+    Merging,
+    Over,
+}
+
 pub struct MergeSort {
     power: usize,
     slice: usize,
     special: (usize, usize),
     reason: Reasons,
-}
-
-impl MergeSort {
-    fn merge(array: &mut [usize], from: usize, mid: usize, to: usize) {
-        let mut temp: Vec<usize> = array.to_owned();
-        let mut k = from;
-        let mut i = from;
-        let mut j = mid + 1;
-        while i <= mid && j <= to {
-            if array[i] < array[j] {
-                temp[k] = array[i];
-                i += 1;
-            } else {
-                temp[k] = array[j];
-                j += 1;
-            }
-            k += 1;
-        }
-        while i < array.len() && i <= mid {
-            temp[k] = array[i];
-            k += 1;
-            i += 1;
-        }
-        array[from..(to + 1)].copy_from_slice(&temp[from..(to + 1)]);
-    }
+    state: State,
+    temp: Vec<usize>,
+    i: usize,
+    j: usize,
+    k: usize,
+    merge_tracker: usize,
 }
 
 impl Sorter for MergeSort {
@@ -41,6 +30,12 @@ impl Sorter for MergeSort {
             slice: usize::MAX,
             reason: Reasons::Limits,
             special: (usize::MAX, usize::MAX),
+            state: State::Init,
+            temp: vec![],
+            i: usize::MAX,
+            j: usize::MAX,
+            k: usize::MAX,
+            merge_tracker: 0,
         }
     }
 
@@ -56,15 +51,21 @@ impl Sorter for MergeSort {
         let size: usize = array.len();
         if self.slice == usize::MAX {
             self.slice = 0;
-        } else if self.slice < size {
-            self.slice += 2 * self.power;
         }
-        if self.slice >= size {
-            self.slice = 0;
-            self.power *= 2;
+        if self.state == State::Over {
+            if size < 2 * self.power {
+                return true;
+            }
+            if self.slice < size - 2 * self.power {
+                self.slice += 2 * self.power;
+            } else {
+                self.slice = 0;
+                self.power *= 2;
+            }
+            self.state = State::Init;
         }
         self.switch(array);
-        self.modify_state(array)
+        false
     }
 
     fn modify_state(&mut self, array: &[usize]) -> bool {
@@ -72,11 +73,46 @@ impl Sorter for MergeSort {
     }
 
     fn switch(&mut self, array: &mut Vec<usize>) {
-        let from = self.slice;
-        let mid = self.slice + self.power - 1;
-        let to = min(self.slice + 2 * self.power - 1, array.len() - 1);
-        self.special = (from, to);
-        MergeSort::merge(array, from, mid, to);
+        let end_of_slice = min(self.slice + 2 * self.power - 1, array.len() - 1);
+        if self.state == State::Init {
+            self.temp = array.to_owned();
+            self.i = self.slice;
+            self.j = self.slice + self.power;
+            self.k = self.slice;
+            self.state = State::Comparing;
+        }
+        if self.state == State::Comparing {
+            if self.i < self.slice + self.power && self.j <= end_of_slice {
+                self.special = (self.i, self.j);
+                self.reason = Reasons::Comparing;
+                if array[self.i] < array[self.j] {
+                    self.temp[self.k] = array[self.i];
+                    self.i += 1;
+                } else {
+                    self.temp[self.k] = array[self.j];
+                    self.j += 1;
+                }
+                self.k += 1;
+            } else {
+                while self.i < array.len() && self.i < self.slice + self.power {
+                    self.temp[self.k] = array[self.i];
+                    self.k += 1;
+                    self.i += 1;
+                }
+                self.state = State::Merging;
+                self.merge_tracker = self.slice;
+            }
+        }
+        if self.state == State::Merging {
+            self.special = (self.merge_tracker, self.merge_tracker);
+            self.reason = Reasons::Switching;
+            array[self.merge_tracker] = self.temp[self.merge_tracker];
+            if self.merge_tracker >= end_of_slice {
+                self.state = State::Over;
+            } else {
+                self.merge_tracker += 1;
+            }
+        }
     }
 
     fn reset_state(&mut self) {
@@ -109,14 +145,5 @@ mod tests {
 
             assert_eq!(array, expected);
         }
-    }
-
-    #[test]
-    fn merge() {
-        let mut arr = vec![9, 13, 10, 11];
-        MergeSort::merge(&mut arr, 0, 1, 3);
-
-        let expected = vec![9, 10, 11, 13];
-        assert_eq!(arr, expected);
     }
 }
