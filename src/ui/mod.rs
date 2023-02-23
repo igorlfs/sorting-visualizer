@@ -36,6 +36,7 @@ const STROKE_WIDTH: f32 = 2.;
 const NUMBERS_GRID: &str = "numbers";
 const STROKE_COLOR: Color32 = Color32::WHITE;
 const WAIT_TIME: Duration = Duration::from_millis(120);
+const FLOOR_POS: f32 = 700.0;
 
 #[derive(PartialEq, Debug)]
 enum State {
@@ -83,8 +84,8 @@ impl Visualizer<'_> {
             ui.add_space(PADDING);
             for i in 0..self.numbers.len() {
                 let text = self.numbers[i].to_string();
-                let height = (BASE_HEIGHT * self.numbers[i]) as f32;
-                let size = vec2(BASE_WIDTH, height);
+                let height: f32 = (self.numbers[i] * BASE_HEIGHT) as f32;
+                let size = vec2(BASE_WIDTH, FLOOR_POS - height);
                 let color = if (i == special.0 || i == special.1) && self.state != State::Finished {
                     match reason {
                         Reasons::Comparing => Color32::LIGHT_YELLOW,
@@ -102,17 +103,19 @@ impl Visualizer<'_> {
     fn draw_numbers_helper(text: String, size: Vec2, color: Color32, ui: &mut Ui) {
         Grid::new(NUMBERS_GRID).show(ui, |ui| {
             ui.vertical_centered(|ui| {
-                ui.label(text);
-                ui.end_row();
-
-                let rect: Rect = ui.allocate_exact_size(size, Sense::hover()).0;
+                let mut rect = ui.allocate_exact_size(size, Sense::hover()).0;
+                rect.set_top(size.y);  
+                rect.set_bottom(FLOOR_POS);
+                let mut number_text: Rect = Rect::NOTHING;
+                number_text.extend_with(egui::pos2(rect.min.x, rect.min.y - 20.0));
+                number_text.extend_with(egui::pos2(rect.max.x, rect.min.y - 10.0));
+                ui.put(number_text, egui::Label::new(text));
                 ui.painter().rect(
                     rect,
                     ROUNDING,
                     color,
                     Stroke::new(STROKE_WIDTH, STROKE_COLOR),
                 );
-                ui.end_row();
             });
         });
     }
