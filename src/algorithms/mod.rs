@@ -5,6 +5,7 @@ pub mod heap_sort;
 pub mod insertion_sort;
 pub mod merge_sort;
 pub mod selection_sort;
+pub mod quick_sort;
 /// A Sorter is a sorting algorithm split in two stages: the `step` and the `state`.
 /// A `step` can be any single step an algorithm takes, such as comparing or switching numbers
 /// A `state` controls the variables that the `step` is going to use.

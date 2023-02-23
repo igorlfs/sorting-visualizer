@@ -3,7 +3,8 @@ mod constants;
 use self::constants::{CEIL, FLOOR, VECTOR_SIZE};
 use crate::algorithms::{
     bogo_sort::BogoSort, bubble_sort::BubbleSort, heap_sort::HeapSort,
-    insertion_sort::InsertionSort, merge_sort::MergeSort, selection_sort::SelectionSort, Reasons,
+    insertion_sort::InsertionSort, merge_sort::MergeSort, selection_sort::SelectionSort, quick_sort::QuickSort,
+    Reasons,
     Sorter,
 };
 use crate::util;
@@ -23,7 +24,7 @@ enum Algorithms {
     Insertion,
     Merge,
     Bogo,
-    // Quick,
+    Quick,
     Heap,
 }
 
@@ -143,6 +144,7 @@ impl Visualizer<'_> {
             Algorithms::Merge => Box::new(MergeSort::new()),
             Algorithms::Bogo => Box::new(BogoSort::new()),
             Algorithms::Heap => Box::new(HeapSort::new()),
+            Algorithms::Quick => Box::new(QuickSort::new()),
         };
         ButtonHandler::handle_reset(self);
     }
