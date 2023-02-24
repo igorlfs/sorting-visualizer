@@ -107,7 +107,7 @@ impl Visualizer<'_> {
         Grid::new(NUMBERS_GRID).show(ui, |ui| {
             ui.vertical_centered(|ui| {
                 let mut rect = ui.allocate_exact_size(size, Sense::hover()).0;
-                rect.set_top(size.y);  
+                rect.set_top(size.y);
                 rect.set_bottom(FLOOR_POS);
                 let mut number_text: Rect = Rect::NOTHING;
                 number_text.extend_with(egui::pos2(rect.min.x, rect.min.y - 20.0));
