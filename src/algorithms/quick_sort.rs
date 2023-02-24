@@ -52,6 +52,13 @@ impl Sorter for QuickSort {
         if self.y == 0 {
             return true;
         } 
+
+        if self.y < self.x {
+            self.moving_pivot = true;
+            self.needs_switch = true;
+            return false;
+        }
+
         // Se for início da iteração, movendo pivot 
         if self.moving_pivot {
             self.needs_switch = true;
@@ -72,10 +79,6 @@ impl Sorter for QuickSort {
                 self.y -= 1;
             }
         }
-        // Se ponteiros se cruzarem
-       // if self.y <= self.x {
-         //   self.needs_switch = true;
-        //}
         if self.left_special != usize::MAX && self.right_special != usize::MAX {
             self.needs_switch = true;
         }
@@ -84,10 +87,15 @@ impl Sorter for QuickSort {
 
     fn switch(&mut self, array: &mut Vec<usize>) {
         if self.moving_pivot {
-            array.swap(self.pivot_ptr, self.partition_end);
+            if self.y < self.x {
+                array.swap(self.pivot_ptr, self.x);
+                self.pivot_ptr = self.x;
+            } else {
+                array.swap(self.pivot_ptr, self.partition_end);
+                self.pivot_ptr = self.partition_end;
+            }
             self.needs_switch = false;
             self.moving_pivot = false;
-            self.pivot_ptr = self.partition_end;
             return;
         }
         array.swap(self.x, self.y);
