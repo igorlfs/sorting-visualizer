@@ -1760,6 +1760,7 @@ dependencies = [
 name = "sorting-visualizer"
 version = "0.1.0"
 dependencies = [
+ "cfg-if",
  "eframe",
  "rand",
  "strum",

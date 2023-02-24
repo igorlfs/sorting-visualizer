@@ -1,17 +1,15 @@
 mod buttons;
 mod constants;
-mod util;
 use self::constants::{CEIL, FLOOR, VECTOR_SIZE};
-use crate::algorithms::merge_sort::MergeSort;
 use crate::algorithms::{
-    bogo_sort::BogoSort, bubble_sort::BubbleSort, insertion_sort::InsertionSort,
-    selection_sort::SelectionSort,
+    bogo_sort::BogoSort, bubble_sort::BubbleSort, heap_sort::HeapSort,
+    insertion_sort::InsertionSort, merge_sort::MergeSort, selection_sort::SelectionSort, Reasons,
+    Sorter,
 };
-use crate::algorithms::{Reasons, Sorter};
+use crate::util;
 use buttons::ButtonHandler;
-use eframe::egui::{Button, CentralPanel, ComboBox, Grid};
 use eframe::{
-    egui::{self, Sense, Ui},
+    egui::{self, Button, CentralPanel, ComboBox, Grid, Sense, Ui},
     epaint::{vec2, Color32, Rect, Stroke, Vec2},
 };
 use std::{thread, time::Duration};
@@ -26,7 +24,7 @@ enum Algorithms {
     Merge,
     Bogo,
     // Quick,
-    // Heap,
+    Heap,
 }
 
 const CENTRALIZE_PADDING: f32 = 300.;
@@ -91,7 +89,6 @@ impl Visualizer<'_> {
                 let color = if (i == special.0 || i == special.1) && self.state != State::Finished {
                     match reason {
                         Reasons::Comparing => Color32::LIGHT_YELLOW,
-                        Reasons::Limits => Color32::LIGHT_BLUE,
                         Reasons::Switching => Color32::LIGHT_GREEN,
                     }
                 } else {
@@ -145,6 +142,7 @@ impl Visualizer<'_> {
             Algorithms::Insertion => Box::new(InsertionSort::new()),
             Algorithms::Merge => Box::new(MergeSort::new()),
             Algorithms::Bogo => Box::new(BogoSort::new()),
+            Algorithms::Heap => Box::new(HeapSort::new()),
         };
         ButtonHandler::handle_reset(self);
     }
