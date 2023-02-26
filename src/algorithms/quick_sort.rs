@@ -28,17 +28,24 @@ impl Sorter for QuickSort {
             right_special: usize::MAX,
             moving_pivot: true,
             reason: Reasons::Comparing,
-            partition_stack: vec![],
             curr_partition_start: 0,
             curr_partition_end: VECTOR_SIZE - 1,
+            partition_stack: vec![(0, VECTOR_SIZE - 1)],
         }
     }
 
     fn special(&self) -> (usize, usize) {
         if self.moving_pivot {
-            return (self.pivot_ptr, self.curr_partition_end);
+            if self.y < self.x {
+                return (self.x, self.pivot_ptr);
+            } else {
+                return (self.pivot_ptr, self.curr_partition_end);
+            }
         }
-        (self.x, self.y)
+        if true  {
+            return (self.x, self.y);
+        }
+        (usize::MAX, usize::MAX)
     }
 
     fn reason(&self) -> super::Reasons {
@@ -55,23 +62,29 @@ impl Sorter for QuickSort {
     }
 
     fn modify_state(&mut self, array: &[usize]) -> bool {
-        println!("{}", array[self.pivot_ptr]);
+        println!("{} {}", self.x, self.y);
         println!("{:?}", self.partition_stack);
-        if self.y == 0 {
+        println!("------------------------------------");
+        if self.partition_stack.len() == 0 {
             return true;
         } 
 
         if self.y < self.x {
             self.moving_pivot = true;
             self.needs_switch = true;
-            self.partition_stack.push((self.curr_partition_start, self.x - 1));
-            self.partition_stack.push((self.x + 1, self.curr_partition_end));
+            self.reason = Reasons::Switching;
+            if self.x - 1 > self.curr_partition_start {
+                self.partition_stack.push((self.curr_partition_start, self.x - 1));
+            }
+            if self.curr_partition_end > self.x + 1 {
+                self.partition_stack.push((self.x + 1, self.curr_partition_end));
+            }
             return false;
         }
 
         // Se for início da iteração, movendo pivot 
         if self.moving_pivot {
-            self.reason = Reasons::Comparing;
+            self.reason = Reasons::Switching;
             self.needs_switch = true;
             return false;
         }
@@ -81,16 +94,28 @@ impl Sorter for QuickSort {
                 self.left_special = self.x;
                 self.moving_left_ptr = false;
             } else {
-                self.x += 1;
+                if self.x == self.curr_partition_end - 1 {
+                    self.needs_switch = true;
+                    self.moving_pivot = true;
+                } else {
+                    self.x += 1;
+                }
             }
         } else {
             if array[self.y] < array[self.pivot_ptr] {
                 self.right_special = self.y;
             } else {
-                self.y -= 1;
+                if self.y == self.curr_partition_start {
+                    self.needs_switch = true;
+                    self.moving_pivot = true;
+                } else {
+                    self.y -= 1;
+                }
             }
         }
+        self.reason = Reasons::Comparing;
         if self.left_special != usize::MAX && self.right_special != usize::MAX {
+            self.reason = Reasons::Switching;
             self.needs_switch = true;
         }
         false
@@ -100,8 +125,22 @@ impl Sorter for QuickSort {
         if self.moving_pivot {
             if self.y < self.x {
                 array.swap(self.pivot_ptr, self.x);
-                (self.x, self.y) = self.partition_stack.pop().unwrap();
-                self.pivot_ptr = (self.y - self.x) / 2;
+                (self.x, self.curr_partition_end) = self.partition_stack.pop().unwrap();
+                self.pivot_ptr = self.x + (self.curr_partition_end - self.x) / 2;
+                self.curr_partition_start = self.x;
+                self.y = self.curr_partition_end - 1;
+            } else if self.x == self.curr_partition_end - 1 {
+                array.swap(self.pivot_ptr, self.pivot_ptr);
+                (self.x, self.curr_partition_end) = self.partition_stack.pop().unwrap();
+                self.pivot_ptr = self.x + (self.curr_partition_end - self.x) / 2;
+                self.curr_partition_start = self.x;
+                self.y = self.curr_partition_end - 1;
+            } else if self.y == self.curr_partition_start{
+                array.swap(self.pivot_ptr, self.curr_partition_start);
+                (self.x, self.curr_partition_end) = self.partition_stack.pop().unwrap();
+                self.pivot_ptr = self.x + (self.curr_partition_end - self.x) / 2;
+                self.curr_partition_start = self.x;
+                self.y = self.curr_partition_end - 1;
             } else {
                 array.swap(self.pivot_ptr, self.curr_partition_end);
                 self.pivot_ptr = self.curr_partition_end;
