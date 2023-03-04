@@ -66,6 +66,8 @@ impl Sorter for QuickSort {
     }
 
     fn modify_state(&mut self, array: &[usize]) -> bool {
+        println!("{:?}", self.partition_stack);
+        println!("{} {}", self.x, self.y);
         if self.partition_stack.len() == 0 {
             return true;
         }
@@ -118,7 +120,6 @@ impl Sorter for QuickSort {
                     self.needs_switch = true;
                     self.returning_pivot = true;
                     self.moving_pivot = true;
-                    self.moving_left_ptr = true;
                 } else {
                     self.y -= 1;
                 }
@@ -162,9 +163,12 @@ impl Sorter for QuickSort {
                 (self.x, self.y) = (self.curr_partition_start, self.curr_partition_end);
                 self.pivot_ptr = median(self.x, (self.x + self.y) / 2, self.y, array);
             } else {
+                if self.partition_stack.len() == 0 {
+                    self.needs_switch = false;
+                    return;
+                }
                 array.swap(self.pivot_ptr, self.curr_partition_end);
                 self.pivot_ptr = self.curr_partition_end;
-
                 self.needs_switch = false;
                 self.moving_pivot = false;
             }
@@ -184,7 +188,7 @@ mod tests {
     use super::{QuickSort, VECTOR_SIZE};
     use crate::{
         algorithms::{
-            constants::{CEIL, FLOOR},
+            constants::{FLOOR, REPETITIONS, CEIL},
             Sorter,
         },
         util,
@@ -192,7 +196,7 @@ mod tests {
 
     #[test]
     fn run() {
-        for _ in 0..VECTOR_SIZE {
+        for _ in 0..REPETITIONS {
             let mut sorter = QuickSort::new();
             let mut array = util::gen_random_vector(FLOOR, CEIL, VECTOR_SIZE);
             let mut expected = array.clone();
