@@ -1,32 +1,15 @@
 use super::{Reasons, Sorter};
-const VECTOR_SIZE: usize = 20; 
+const VECTOR_SIZE: usize = 20;
 
 fn median(x: usize, y: usize, z: usize, array: &[usize]) -> usize {
-    if array[x] >= array[y]{
-        if array[y] >= array[z] {
-            return y;
-        } else {
-            return z;
-        }
-    }  
-
-    if array[y] >= array[z] {
-        if array[z] >= array[x] {
-            return z;
-        } else{
-            return x;
-        }
-    } 
-
-    if array[z] >= array[x] {
-        if array[x] >= array[y] {
-            return x;
-        } else {
-            return y;
-        }
+    if (array[x] > array[y]) ^ (array[x] > array[z]) {
+        return x;
     }
 
-    usize::MAX
+    if (array[y] > array[x]) ^ (array[y] > array[z]) {
+        return y;
+    }
+    return z;
 }
 
 pub struct QuickSort {
@@ -59,7 +42,7 @@ impl Sorter for QuickSort {
             returning_pivot: false,
             curr_partition_start: 0,
             curr_partition_end: VECTOR_SIZE - 1,
-         }
+        }
     }
 
     fn special(&self) -> (usize, usize) {
@@ -83,31 +66,43 @@ impl Sorter for QuickSort {
     }
 
     fn modify_state(&mut self, array: &[usize]) -> bool {
-        if self.pivot_ptr != usize::MAX { println!("{}", array[self.pivot_ptr])};
-        println!("{} {}", self.curr_partition_start, self.curr_partition_end);
         if self.partition_stack.len() == 0 {
             return true;
         }
-        
+
+        self.reason = Reasons::Comparing;
+
         if self.pivot_ptr == usize::MAX {
-           self.special = (self.pivot_ptr, self.pivot_ptr);
-           (self.curr_partition_start, self.curr_partition_end) = *self.partition_stack.last().unwrap();
-           self.pivot_ptr = median(self.curr_partition_start, (self.curr_partition_end - self.curr_partition_start)/2 + self.curr_partition_start, self.curr_partition_end, array);
-           return false;
+            self.special = (self.pivot_ptr, self.pivot_ptr);
+            (self.curr_partition_start, self.curr_partition_end) =
+                *self.partition_stack.last().unwrap();
+            self.pivot_ptr = median(
+                self.curr_partition_start,
+                (self.curr_partition_end - self.curr_partition_start) / 2
+                    + self.curr_partition_start,
+                self.curr_partition_end,
+                array,
+            );
+            return false;
         }
 
         if self.moving_pivot {
-            self.special = (self.pivot_ptr, self.curr_partition_end);
+            if self.returning_pivot {
+                self.special = (self.pivot_ptr, self.x);
+            } else {
+                self.special = (self.pivot_ptr, self.curr_partition_end);
+            }
             self.needs_switch = true;
             return false;
         }
 
         self.special = (self.x, self.y);
-        
+
         // Se ponteiros se cruzarem
         if self.y < self.x {
             self.moving_pivot = true;
             self.returning_pivot = true;
+            self.needs_switch = true;
             return false;
         }
 
@@ -126,33 +121,35 @@ impl Sorter for QuickSort {
             }
         }
         false
-   }
+    }
 
     fn switch(&mut self, array: &mut Vec<usize>) {
+        self.reason = Reasons::Switching;
         if self.moving_pivot {
             if self.returning_pivot {
                 array.swap(self.x, self.pivot_ptr);
                 self.moving_pivot = true;
                 self.returning_pivot = false;
-                
+
+                if self.x - self.curr_partition_start >= 2 {
+                    self.partition_stack
+                        .push((self.curr_partition_start, self.x - 1));
+                }
+
+                if self.curr_partition_end - self.x >= 2 {
+                    self.partition_stack
+                        .push((self.x + 1, self.curr_partition_end));
+                }
 
                 if self.partition_stack.len() > 0 {
-                    if *self.partition_stack.last().unwrap() == (0, VECTOR_SIZE - 1){
+                    if *self.partition_stack.last().unwrap() == (0, VECTOR_SIZE - 1) {
                         self.partition_stack.pop();
                     }
                 }
-                
-                if self.x - self.curr_partition_start >= 2 {
-                    self.partition_stack.push((self.curr_partition_start, self.x - 1));
-                } 
 
-                if self.curr_partition_end - self.x >= 2 {
-                    self.partition_stack.push((self.x + 1, self.curr_partition_end));
-                }
-
-                // Aqui, provavelmente checar antes se existe algo na stack
                 if self.partition_stack.len() > 0 {
-                    (self.curr_partition_start, self.curr_partition_end) = self.partition_stack.pop().unwrap();
+                    (self.curr_partition_start, self.curr_partition_end) =
+                        self.partition_stack.pop().unwrap();
                 }
                 (self.x, self.y) = (self.curr_partition_start, self.curr_partition_end);
                 self.pivot_ptr = median(self.x, (self.x + self.y) / 2, self.y, array);
@@ -171,5 +168,31 @@ impl Sorter for QuickSort {
 
     fn reset_state(&mut self) {
         *self = QuickSort::new();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{QuickSort, VECTOR_SIZE};
+    use crate::{
+        algorithms::{
+            constants::{CEIL, FLOOR},
+            Sorter,
+        },
+        util,
+    };
+
+    #[test]
+    fn run() {
+        for _ in 0..VECTOR_SIZE {
+            let mut sorter = QuickSort::new();
+            let mut array = util::gen_random_vector(FLOOR, CEIL, VECTOR_SIZE);
+            let mut expected = array.clone();
+            expected.sort();
+
+            sorter.run(&mut array);
+
+            assert_eq!(array, expected);
+        }
     }
 }
