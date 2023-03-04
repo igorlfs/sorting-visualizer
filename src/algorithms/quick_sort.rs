@@ -114,7 +114,14 @@ impl Sorter for QuickSort {
             }
         } else {
             if array[self.y] >= array[self.pivot_ptr] {
-                self.y -= 1;
+                if self.y == self.curr_partition_start {
+                    self.needs_switch = true;
+                    self.returning_pivot = true;
+                    self.moving_pivot = true;
+                    self.moving_left_ptr = true;
+                } else {
+                    self.y -= 1;
+                }
             } else {
                 self.moving_left_ptr = true;
                 self.needs_switch = true;
@@ -127,6 +134,7 @@ impl Sorter for QuickSort {
         self.reason = Reasons::Switching;
         if self.moving_pivot {
             if self.returning_pivot {
+                self.special = (self.x, self.pivot_ptr);
                 array.swap(self.x, self.pivot_ptr);
                 self.moving_pivot = true;
                 self.returning_pivot = false;
