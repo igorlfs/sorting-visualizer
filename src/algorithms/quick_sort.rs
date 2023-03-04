@@ -66,8 +66,6 @@ impl Sorter for QuickSort {
     }
 
     fn modify_state(&mut self, array: &[usize]) -> bool {
-        println!("{:?}", self.partition_stack);
-        println!("{} {}", self.x, self.y);
         if self.partition_stack.len() == 0 {
             return true;
         }
