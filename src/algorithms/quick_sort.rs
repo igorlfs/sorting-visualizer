@@ -73,7 +73,6 @@ impl Sorter for QuickSort {
         self.reason = Reasons::Comparing;
 
         if self.pivot_ptr == usize::MAX {
-            self.special = (self.pivot_ptr, self.pivot_ptr);
             (self.curr_partition_start, self.curr_partition_end) =
                 *self.partition_stack.last().unwrap();
             self.pivot_ptr = median(
@@ -83,6 +82,10 @@ impl Sorter for QuickSort {
                 self.curr_partition_end,
                 array,
             );
+            self.special = (self.pivot_ptr, self.curr_partition_end);
+            if self.moving_pivot {
+                self.needs_switch = true;
+            }
             return false;
         }
 
