@@ -1,1 +1,0 @@
-1. Na UI, quando um pivot retorna a sua posição correta, há uma troca de valores que nao sao considerados especiais. Provavelmente se trata de valores do novo pivo sendo calculado e colocado ao fim da aprticao atual, mas o special n acompanha ele.
