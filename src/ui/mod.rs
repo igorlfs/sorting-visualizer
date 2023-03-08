@@ -1,5 +1,5 @@
 mod buttons;
-mod constants;
+pub mod constants;
 use self::constants::{CEIL, FLOOR, VECTOR_SIZE};
 use crate::algorithms::{
     bogo_sort::BogoSort, bubble_sort::BubbleSort, heap_sort::HeapSort,

@@ -1,5 +1,5 @@
 use super::{Reasons, Sorter};
-const VECTOR_SIZE: usize = 20;
+use crate::ui::constants::VECTOR_SIZE;
 
 fn median(x: usize, y: usize, z: usize, array: &[usize]) -> usize {
     if (array[x] > array[y]) ^ (array[x] > array[z]) {
@@ -189,7 +189,7 @@ mod tests {
     use super::{QuickSort, VECTOR_SIZE};
     use crate::{
         algorithms::{
-            constants::{FLOOR, REPETITIONS, CEIL},
+            constants::{CEIL, FLOOR, REPETITIONS},
             Sorter,
         },
         util,
