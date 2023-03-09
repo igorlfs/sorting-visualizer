@@ -1,8 +1,6 @@
-name: Rust
+name: CI
 
-on:
-  push:
-    branches: [ "main" ]
+on: [push, pull_request]
 
 env:
   CARGO_TERM_COLOR: always
@@ -18,3 +16,19 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
+      
+  hygiene:
+    name: Hygiene
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install rust stable
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+    - name: fmt
+      run: cargo fmt -- --check
+    - name: clippy
+      run: cargo clippy --all-targets
