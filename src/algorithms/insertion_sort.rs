@@ -86,7 +86,7 @@ mod tests {
     fn run() {
         for _ in 0..REPETITIONS {
             let mut sorter = InsertionSort::new();
-            let mut array = util::gen_random_vector(FLOOR, CEIL, SIZE); 
+            let mut array = util::gen_random_vector(FLOOR, CEIL, SIZE);
             let mut expected = array.clone();
             expected.sort();
             sorter.run(&mut array);
