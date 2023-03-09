@@ -1,6 +1,7 @@
 # Sorting Visualizer
 
-<img src="assets/demo.gif" alt="execution GIF">
+<video src="https://user-images.githubusercontent.com/84649544/224125831-35eaf450-fe71-4d3a-b64f-ab49d88dc1b7.mp4" controls="controls" style="max-width: 730px;">
+</video>
 
 > Visualize the execution of the most common sorting algorithms
 
