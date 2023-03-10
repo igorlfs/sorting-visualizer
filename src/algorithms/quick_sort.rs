@@ -9,7 +9,7 @@ fn median(x: usize, y: usize, z: usize, array: &[usize]) -> usize {
     if (array[y] > array[x]) ^ (array[y] > array[z]) {
         return y;
     }
-    return z;
+    z
 }
 
 pub struct QuickSort {
@@ -66,7 +66,7 @@ impl Sorter for QuickSort {
     }
 
     fn modify_state(&mut self, array: &[usize]) -> bool {
-        if self.partition_stack.len() == 0 {
+        if self.partition_stack.is_empty() {
             return true;
         }
 
@@ -115,19 +115,17 @@ impl Sorter for QuickSort {
             } else {
                 self.moving_left_ptr = false;
             }
-        } else {
-            if array[self.y] >= array[self.pivot_ptr] {
-                if self.y == self.curr_partition_start {
-                    self.needs_switch = true;
-                    self.returning_pivot = true;
-                    self.moving_pivot = true;
-                } else {
-                    self.y -= 1;
-                }
-            } else {
-                self.moving_left_ptr = true;
+        } else if array[self.y] >= array[self.pivot_ptr] {
+            if self.y == self.curr_partition_start {
                 self.needs_switch = true;
+                self.returning_pivot = true;
+                self.moving_pivot = true;
+            } else {
+                self.y -= 1;
             }
+        } else {
+            self.moving_left_ptr = true;
+            self.needs_switch = true;
         }
         false
     }
@@ -151,20 +149,20 @@ impl Sorter for QuickSort {
                         .push((self.x + 1, self.curr_partition_end));
                 }
 
-                if self.partition_stack.len() > 0 {
-                    if *self.partition_stack.last().unwrap() == (0, VECTOR_SIZE - 1) {
-                        self.partition_stack.pop();
-                    }
+                if !self.partition_stack.is_empty()
+                    && *self.partition_stack.last().unwrap() == (0, VECTOR_SIZE - 1)
+                {
+                    self.partition_stack.pop();
                 }
 
-                if self.partition_stack.len() > 0 {
+                if !self.partition_stack.is_empty() {
                     (self.curr_partition_start, self.curr_partition_end) =
                         self.partition_stack.pop().unwrap();
                 }
                 (self.x, self.y) = (self.curr_partition_start, self.curr_partition_end);
                 self.pivot_ptr = median(self.x, (self.x + self.y) / 2, self.y, array);
             } else {
-                if self.partition_stack.len() == 0 {
+                if self.partition_stack.is_empty() {
                     self.needs_switch = false;
                     return;
                 }
