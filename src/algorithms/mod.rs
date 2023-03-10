@@ -1,6 +1,5 @@
 pub mod bogo_sort;
 pub mod bubble_sort;
-mod constants;
 pub mod heap_sort;
 pub mod insertion_sort;
 pub mod merge_sort;
@@ -51,3 +50,13 @@ pub enum Reasons {
     Comparing,
     Switching,
 }
+
+// contants used to test run()
+#[cfg(test)]
+const REPETITIONS: i32 = 10;
+#[cfg(test)]
+const FLOOR: usize = 0;
+#[cfg(test)]
+const CEIL: usize = 100;
+#[cfg(test)]
+const SIZE: usize = 30;

@@ -1,7 +1,5 @@
 use eframe::{epaint::Vec2, run_native, NativeOptions};
 
-#[macro_use]
-extern crate cfg_if;
 mod algorithms;
 mod ui;
 mod util;

@@ -75,8 +75,7 @@ mod tests {
     use super::SelectionSort;
     use crate::{
         algorithms::{
-            constants::{CEIL, FLOOR, REPETITIONS, SIZE},
-            Sorter,
+            Sorter, {CEIL, FLOOR, REPETITIONS, SIZE},
         },
         util,
     };

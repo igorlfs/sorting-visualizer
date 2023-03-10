@@ -69,8 +69,7 @@ mod tests {
     use super::BubbleSort;
     use crate::{
         algorithms::{
-            constants::{CEIL, FLOOR, REPETITIONS, SIZE},
-            Sorter,
+            Sorter, {CEIL, FLOOR, REPETITIONS, SIZE},
         },
         util,
     };

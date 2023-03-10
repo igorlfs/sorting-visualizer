@@ -187,8 +187,7 @@ mod tests {
     use super::{QuickSort, VECTOR_SIZE};
     use crate::{
         algorithms::{
-            constants::{CEIL, FLOOR, REPETITIONS},
-            Sorter,
+            Sorter, {CEIL, FLOOR, REPETITIONS},
         },
         util,
     };

@@ -129,8 +129,7 @@ mod tests {
     use super::HeapSort;
     use crate::{
         algorithms::{
-            constants::{CEIL, FLOOR, REPETITIONS, SIZE},
-            Sorter,
+            Sorter, {CEIL, FLOOR, REPETITIONS, SIZE},
         },
         util,
     };

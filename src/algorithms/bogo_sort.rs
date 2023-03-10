@@ -83,8 +83,7 @@ mod tests {
     use super::BogoSort;
     use crate::{
         algorithms::{
-            constants::{CEIL, FLOOR, REPETITIONS},
-            Sorter,
+            Sorter, {CEIL, FLOOR, REPETITIONS},
         },
         util,
     };
